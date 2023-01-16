@@ -1,5 +1,6 @@
 pub mod image;
 pub mod render;
+pub mod geometry;
 
 pub fn add(left: usize, right: usize) -> usize {
     left + right
