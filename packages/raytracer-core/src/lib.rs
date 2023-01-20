@@ -2,6 +2,12 @@ pub mod image;
 pub mod render;
 pub mod geometry;
 
+#[cfg(feature = "wasm")]
+mod wasm_util;
+
+#[cfg(target = "wasm32")]
+extern crate wasm_bindgen;
+
 pub fn add(left: usize, right: usize) -> usize {
     left + right
 }

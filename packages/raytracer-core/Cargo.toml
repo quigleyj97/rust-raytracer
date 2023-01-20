@@ -6,4 +6,22 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-cgmath = "0.18.0"
+cgmath = "0.18.0" # vector math
+log = "0.4" # logging facade that works on both web and CLI
+
+# optional WASM deps
+wasm-bindgen = { version = "0.2", optional = true }
+js-sys = { version = "0.3", optional = true }
+console_error_panic_hook = { version = "0.1", optional = true }
+console_log = { version = "0.2", optional = true }
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+wasm = [
+    "dep:wasm-bindgen",
+    "dep:js-sys",
+    "dep:console_error_panic_hook",
+    "dep:console_log",
+]
