@@ -1,4 +1,5 @@
 use cgmath::{vec3, Vector3, point3, InnerSpace};
+use log::debug;
 
 use crate::{image::buffer::ImageBuffer, geometry::{sphere::Sphere, RayCollidable, ray::Ray}};
 
@@ -29,9 +30,9 @@ pub fn render_helloworld() -> ImageBuffer {
     const VIEWPORT_WIDTH: f64 = VIEWPORT_HEIGHT * ASPECT_RATIO;
     const FOCAL_LENGTH: f64 = 1.0;
 
-    eprintln!("Rendering parameters");
-    eprintln!("  Output: {} x {} @ {}", WIDTH, HEIGHT, ASPECT_RATIO);
-    eprintln!("  Viewport: {} x {}", VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
+    debug!("Rendering parameters");
+    debug!("  Output: {} x {} @ {}", WIDTH, HEIGHT, ASPECT_RATIO);
+    debug!("  Viewport: {} x {}", VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
 
     let origin = point3(0.0, 0.0, 0.0);
     let horizontal = vec3(VIEWPORT_WIDTH, 0.0, 0.0);
@@ -49,7 +50,7 @@ pub fn render_helloworld() -> ImageBuffer {
     let height = buf.height;
 
     for j in (0..(height - 1)).rev() {
-        eprintln!("{} Scanlines remaining", j);
+        debug!("{} Scanlines remaining", j);
         for i in 0..width {
             let u: f64 = i as f64 / (width - 1) as f64;
             let v: f64 = j as f64 / (height - 1) as f64;

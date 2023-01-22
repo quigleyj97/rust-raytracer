@@ -2,6 +2,7 @@ const webpack = require('webpack');
 const path = require('path');
 const WasmPackPlugin = require('@wasm-tool/wasm-pack-plugin');
 
+/** @type {webpack.Configuration} */
 const config = {
     entry: [
         './src/index.tsx'
@@ -52,7 +53,8 @@ const config = {
     experiments: {
         asyncWebAssembly: true
     },
-    devtool: 'eval'
+    devtool: 'eval',
+    mode: process.env.NODE_ENV === 'production' ? 'production' : 'development'
 };
 
 module.exports = config;

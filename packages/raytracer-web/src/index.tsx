@@ -1,6 +1,6 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import { WasmBinary } from "./wasm"
+import React, { useCallback, useRef } from "react";
+import { createRoot } from "react-dom/client";
+import { HTMLRaytracerViewElement, WasmBinary } from "./wasm"
 
 export {};
 
@@ -11,8 +11,20 @@ const binary = new WasmBinary();
 (window as any).__binary = binary;
 
 const HelloWasm = () => {
-    return (<p>Hello, world!!!</p>);
+    const ref = useRef<HTMLRaytracerViewElement>(null);
+
+    const draw = useCallback(() => {
+        if (!ref.current) return;
+
+        ref.current.renderAndPaint();
+    }, [ref]);
+
+    return (<p>Hello, world!
+        <button onClick={draw}>Render image</button>
+        <ray-tracer ref={ref}></ray-tracer>
+    </p>);
 };
 
-const root = document.querySelector("#root");
-ReactDOM.render(<HelloWasm />, root);
+const container = document.querySelector("#root")!;
+const root = createRoot(container);
+root.render(<HelloWasm />);

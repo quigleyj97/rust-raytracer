@@ -7,8 +7,9 @@ use console_log;
 use log::{info, Level};
 use std::panic;
 use wasm_bindgen::prelude::*;
-use crate::image::ppm;
+// use crate::image::ppm;
 use crate::render;
+use crate::image::buffer;
 
 #[wasm_bindgen]
 pub fn init_debug_hooks() {
@@ -18,8 +19,9 @@ pub fn init_debug_hooks() {
 }
 
 #[wasm_bindgen]
-pub fn draw_scene() -> String {
+pub fn draw_scene() -> Vec<u8> {
     let test_image = render::render_helloworld();
-    let result = ppm::make_image(&test_image.data, test_image.width, test_image.height);
-    result
+    let result = buffer::convert::rgb_to_rgba(&test_image, 255);
+    // let result = ppm::make_image(&test_image.data, test_image.width, test_image.height);
+    result.data
 }
