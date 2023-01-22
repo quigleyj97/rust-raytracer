@@ -6,7 +6,7 @@ pub struct SceneGraph {
     objects: Vec<Box<dyn RayCollidable>>
 }
 
-impl RayCollidable for &SceneGraph {
+impl RayCollidable for SceneGraph {
     fn will_intersect(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<Collision> {
         let mut collision: Option<Collision> = None;
         let mut closest_hit = t_max;

@@ -4,6 +4,7 @@ pub use self::ray::{Ray, Point, Vector};
 
 mod ray;
 pub mod sphere;
+pub mod util;
 
 /** An object representing a collision between a ray and a `RayCollidable`
 
