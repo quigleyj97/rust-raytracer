@@ -24,6 +24,7 @@ pub fn render_helloworld() -> ImageBuffer {
     const WIDTH: usize = 720;
     const HEIGHT: usize = 405;
     const ASPECT_RATIO: f64 = WIDTH as f64 / HEIGHT as f64;
+    const SAMPLES_PER_PIXEL: i64 = 100;
 
     let camera = Camera::new(
         ASPECT_RATIO
@@ -41,11 +42,14 @@ pub fn render_helloworld() -> ImageBuffer {
     for j in (0..(height - 1)).rev() {
         debug!("{} Scanlines remaining", j);
         for i in 0..width {
-            let u: f64 = i as f64 / (width - 1) as f64;
-            let v: f64 = j as f64 / (height - 1) as f64;
-            let ray = camera.project_ray(u, v);
-            // choose color
-            let color = ray_color(&ray, &scene);
+            let mut color = vec3(0.0, 0.0, 0.0);
+            for _ in 0..SAMPLES_PER_PIXEL {
+                let u: f64 = ((i as f64) + rand::random::<f64>()) / (width - 1) as f64;
+                let v: f64 = ((j as f64) + rand::random::<f64>()) / (height - 1) as f64;
+                let ray = camera.project_ray(u, v);
+                color += ray_color(&ray, &scene);
+            }
+            color /= SAMPLES_PER_PIXEL as f64;
             let idx = (j * width + i) * 3;
             buf.data[idx + 0] = (255.0 * color[0]).round() as u8;
             buf.data[idx + 1] = (255.0 * color[1]).round() as u8;
