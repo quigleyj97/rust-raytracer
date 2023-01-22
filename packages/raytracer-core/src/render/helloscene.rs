@@ -1,19 +1,17 @@
 use cgmath::{vec3, Vector3, point3, InnerSpace};
 use log::debug;
 
-use crate::{image::buffer::ImageBuffer, geometry::{sphere::Sphere, RayCollidable, ray::Ray}};
+use crate::{image::buffer::ImageBuffer, geometry::{sphere::Sphere, RayCollidable, ray::Ray}, scene::{SceneGraph, new_test_world}};
 
 
-fn ray_color(ray: &Ray, scene: &Vec<Box<dyn RayCollidable>>) -> Vector3<f64> {
-    for object in scene {
-        match &object.will_intersect(&ray, 0.0, 3.0) {
-            Option::None => {
-                // do nothing
-            },
-            Option::Some(collision) => {
-                let unit_normal = collision.normal.normalize();
-                return 0.5 * vec3(unit_normal.x + 1.0, unit_normal.y + 1.0, unit_normal.z + 1.0);
-            }
+fn ray_color<T: RayCollidable>(ray: &Ray, scene: T) -> Vector3<f64> {
+    match &scene.will_intersect(&ray, 0.0, 3.0) {
+        Option::None => {
+            // do nothing
+        },
+        Option::Some(collision) => {
+            let unit_normal = collision.normal.normalize();
+            return 0.5 * vec3(unit_normal.x + 1.0, unit_normal.y + 1.0, unit_normal.z + 1.0);
         }
     }
 
@@ -39,10 +37,7 @@ pub fn render_helloworld() -> ImageBuffer {
     let vertical = vec3(0.0, -VIEWPORT_HEIGHT, 0.0);
     let lower_left_corner = origin - horizontal / 2.0 - vertical / 2.0 - vec3(0.0, 0.0, FOCAL_LENGTH);
 
-    let scene: Vec<Box<dyn RayCollidable>> = vec![
-        Box::new(Sphere::new(point3(0.0, 0.0, -1.0), 0.5)),
-        Box::new(Sphere::new(point3(0.0, -100.5, -1.0), 100.0))
-    ];
+    let scene = new_test_world();
 
     let mut buf = ImageBuffer::new_rgb(WIDTH, HEIGHT);
 
