@@ -1,8 +1,8 @@
 //! Helper classes for working with ray collisions
 
-use self::ray::{Ray, Point, Vector};
+pub use self::ray::{Ray, Point, Vector};
 
-pub mod ray;
+mod ray;
 pub mod sphere;
 
 /** An object representing a collision between a ray and a `RayCollidable`

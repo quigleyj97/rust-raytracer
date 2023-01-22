@@ -1,6 +1,6 @@
 use cgmath::point3;
 
-use crate::geometry::{sphere::Sphere, RayCollidable, ray::Ray, Collision};
+use crate::geometry::{sphere::Sphere, RayCollidable, Ray, Collision};
 
 pub struct SceneGraph {
     objects: Vec<Box<dyn RayCollidable>>

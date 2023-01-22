@@ -1,11 +1,11 @@
-use cgmath::{vec3, Vector3, point3, InnerSpace};
+use cgmath::{vec3, Vector3, InnerSpace};
 use log::debug;
 
-use crate::{image::buffer::ImageBuffer, geometry::{sphere::Sphere, RayCollidable, ray::Ray}, scene::{SceneGraph, new_test_world}};
+use crate::{image::buffer::ImageBuffer, geometry::{RayCollidable, Ray}, scene::new_test_world, render::camera::Camera};
 
 
 fn ray_color<T: RayCollidable>(ray: &Ray, scene: T) -> Vector3<f64> {
-    match &scene.will_intersect(&ray, 0.0, 3.0) {
+    match &scene.will_intersect(&ray, 0.0, f64::INFINITY) {
         Option::None => {
             // do nothing
         },
@@ -24,18 +24,12 @@ pub fn render_helloworld() -> ImageBuffer {
     const WIDTH: usize = 720;
     const HEIGHT: usize = 405;
     const ASPECT_RATIO: f64 = WIDTH as f64 / HEIGHT as f64;
-    const VIEWPORT_HEIGHT: f64 = 2.0;
-    const VIEWPORT_WIDTH: f64 = VIEWPORT_HEIGHT * ASPECT_RATIO;
-    const FOCAL_LENGTH: f64 = 1.0;
 
-    debug!("Rendering parameters");
-    debug!("  Output: {} x {} @ {}", WIDTH, HEIGHT, ASPECT_RATIO);
-    debug!("  Viewport: {} x {}", VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
+    let camera = Camera::new(
+        ASPECT_RATIO
+    );
 
-    let origin = point3(0.0, 0.0, 0.0);
-    let horizontal = vec3(VIEWPORT_WIDTH, 0.0, 0.0);
-    let vertical = vec3(0.0, -VIEWPORT_HEIGHT, 0.0);
-    let lower_left_corner = origin - horizontal / 2.0 - vertical / 2.0 - vec3(0.0, 0.0, FOCAL_LENGTH);
+    debug!("Output dimensions: {} x {} @ {}", WIDTH, HEIGHT, ASPECT_RATIO);
 
     let scene = new_test_world();
 
@@ -49,8 +43,7 @@ pub fn render_helloworld() -> ImageBuffer {
         for i in 0..width {
             let u: f64 = i as f64 / (width - 1) as f64;
             let v: f64 = j as f64 / (height - 1) as f64;
-            let ray_direction = lower_left_corner + u * horizontal + v * vertical - origin;
-            let ray = Ray::new(origin, ray_direction);
+            let ray = camera.project_ray(u, v);
             // choose color
             let color = ray_color(&ray, &scene);
             let idx = (j * width + i) * 3;
