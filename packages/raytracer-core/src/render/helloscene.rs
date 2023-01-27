@@ -34,8 +34,8 @@ pub fn render_helloworld() -> ImageBuffer {
     const WIDTH: usize = 720;
     const HEIGHT: usize = 405;
     const ASPECT_RATIO: f64 = WIDTH as f64 / HEIGHT as f64;
-    const SAMPLES_PER_PIXEL: i64 = 100;
-    const MAX_RAY_CASTS: i64 = 10;
+    const SAMPLES_PER_PIXEL: i64 = 3;
+    const MAX_RAY_CASTS: i64 = 3;
 
     let camera = Camera::new(
         ASPECT_RATIO
