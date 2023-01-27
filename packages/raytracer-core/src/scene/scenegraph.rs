@@ -1,11 +1,11 @@
-use std::rc::Rc;
+use std::sync::Arc;
 
 use cgmath::{point3, vec3};
 
 use crate::{geometry::{sphere::Sphere, RayCollidable, Ray, Collision}, shader::{Lambertian, Metallic}};
 
 pub struct SceneGraph {
-    objects: Vec<Box<dyn RayCollidable>>
+    objects: Vec<Box<dyn RayCollidable + Send + Sync>>
 }
 
 impl RayCollidable for SceneGraph {
@@ -34,17 +34,17 @@ pub fn new_test_world() -> SceneGraph {
             Box::new(Sphere::new_with_material(
                 point3(0.0, -100.5, -1.0),
                 100.0,
-                Rc::new(Lambertian::new(vec3(0.0, 1.0, 0.0)))
+                Arc::new(Lambertian::new(vec3(0.0, 1.0, 0.0)))
             )),
             Box::new(Sphere::new_with_material(
                 point3(-1.0, 0.0, -1.0),
                 0.5, 
-                Rc::new(Metallic::new(vec3(0.7, 0.7, 1.0), 0.3))
+                Arc::new(Metallic::new(vec3(0.7, 0.7, 1.0), 0.3))
             )),
             Box::new(Sphere::new_with_material(
                 point3(1.1, 0.0, -1.0),
                 0.5,
-                Rc::new(Metallic::new(vec3(0.4, 0.4, 0.4), 0.0))
+                Arc::new(Metallic::new(vec3(0.4, 0.4, 0.4), 0.0))
             ))
         ]
     }

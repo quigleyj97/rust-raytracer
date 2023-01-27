@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::sync::Arc;
 
 use cgmath::vec3;
 
@@ -9,7 +9,7 @@ use super::{ray::{Point, Ray}, RayCollidable, Collision};
 pub struct Sphere {
     pub center: Point,
     pub radius: f64,
-    pub material: Rc<dyn Material>
+    pub material: Arc<dyn Material + Send + Sync>
 }
 
 impl RayCollidable for Sphere {
@@ -48,10 +48,10 @@ impl RayCollidable for Sphere {
 impl Sphere {
     pub fn new(center: Point, radius: f64) -> Sphere {
         let material = Lambertian::new(vec3(1.0, 0.0, 0.0));
-        Sphere::new_with_material(center, radius, Rc::new(material))
+        Sphere::new_with_material(center, radius, Arc::new(material))
     }
 
-    pub fn new_with_material(center: Point, radius: f64, material: Rc<dyn Material>) -> Sphere {
+    pub fn new_with_material(center: Point, radius: f64, material: Arc<dyn Material + Send + Sync>) -> Sphere {
         Sphere { center, radius, material }
     }
 }
