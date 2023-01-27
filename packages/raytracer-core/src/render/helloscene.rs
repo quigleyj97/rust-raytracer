@@ -1,7 +1,7 @@
 use cgmath::{vec3, Vector3, InnerSpace};
-use log::debug;
+use log::{debug, info};
 
-use crate::{image::buffer::ImageBuffer, geometry::{RayCollidable, Ray}, scene::new_test_world, render::camera::Camera};
+use crate::{image::buffer::ImageBuffer, geometry::{RayCollidable, Ray}, scene::new_test_world, render::{camera::Camera, iter::{PixelIterator, Pixel, ChunkedPixelIterator}}};
 
 
 fn ray_color<T: RayCollidable>(ray: &Ray, scene: &T, min_clip: f64, max_depth: i64) -> Vector3<f64> {
@@ -46,10 +46,14 @@ pub fn render_helloworld() -> ImageBuffer {
 
     let width = buf.width;
     let height = buf.height;
+    let mut i_chunk = 0;
 
-    for j in (0..(height - 1)).rev() {
-        debug!("{} Scanlines remaining", j);
-        for i in 0..width {
+    for chunk in ChunkedPixelIterator::with_chunks(width, height, 10){
+        info!("Rendering chunk {} of {}", i_chunk, 10);
+        i_chunk += 1;
+        for Pixel {x, y} in chunk {
+            let i = x;
+            let j = y;
             let mut color = vec3(0.0, 0.0, 0.0);
             for _ in 0..SAMPLES_PER_PIXEL {
                 let u: f64 = ((i as f64) + rand::random::<f64>()) / (width - 1) as f64;
