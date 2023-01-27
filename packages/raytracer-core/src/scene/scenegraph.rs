@@ -39,12 +39,12 @@ pub fn new_test_world() -> SceneGraph {
             Box::new(Sphere::new_with_material(
                 point3(-1.0, 0.0, -1.0),
                 0.5, 
-                Rc::new(Metallic::new(vec3(0.7, 0.7, 1.0)))
+                Rc::new(Metallic::new(vec3(0.7, 0.7, 1.0), 0.3))
             )),
             Box::new(Sphere::new_with_material(
                 point3(1.1, 0.0, -1.0),
                 0.5,
-                Rc::new(Metallic::new(vec3(0.4, 0.4, 0.4)))
+                Rc::new(Metallic::new(vec3(0.4, 0.4, 0.4), 0.0))
             ))
         ]
     }

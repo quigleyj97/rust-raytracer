@@ -1,17 +1,19 @@
 use cgmath::InnerSpace;
 
-use crate::geometry::{Ray, Collision, Vector};
+use crate::geometry::{Ray, Collision, Vector, util};
 
 use super::Material;
 
 pub struct Metallic {
     /// The 'color' of the metal
     albedo: Vector,
+    /// How 'fuzzy' the material's reflections are, to mimic matte finishes
+    fuzziness: f64,
 }
 
 impl Metallic {
-    pub fn new(albedo: Vector) -> Metallic {
-        Metallic { albedo } 
+    pub fn new(albedo: Vector, fuzziness: f64) -> Metallic {
+        Metallic { albedo, fuzziness } 
     }
 
     fn reflect(vector: Vector, normal: Vector) -> Vector {
@@ -23,7 +25,11 @@ impl Material for Metallic {
     fn scatter(&self, ray: &Ray, collision: &Collision) -> Option<(Vector, Ray)> {
         let reflection = Metallic::reflect(ray.direction.normalize(), collision.normal);
         return if cgmath::dot(reflection, collision.normal) > 0.0 {
-            Option::Some((self.albedo, Ray::new(collision.point, reflection)))
+            let reflection_fuzzed = if self.fuzziness != 0.0 {
+                reflection + (self.fuzziness * util::vector::random_unit_vector())
+            } else { reflection };
+            let scatter_ray = Ray::new(collision.point, reflection_fuzzed);
+            Option::Some((self.albedo, scatter_ray))
         } else {
             Option::None
         }

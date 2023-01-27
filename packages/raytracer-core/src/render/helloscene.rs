@@ -19,9 +19,6 @@ fn ray_color<T: RayCollidable>(ray: &Ray, scene: &T, min_clip: f64, max_depth: i
                     return attenuation.zip(ray_color(&scatter_ray, scene, min_clip, max_depth - 1), |a, b| -> f64 {a * b});
                 }
             };
-            // let target = collision.point + collision.normal + util::vector::random_unit_vector();
-            // let ray = Ray::new(collision.point, target - collision.point);
-            // return 0.5 * ray_color(&ray, scene,  min_clip, max_depth - 1);
         }
     }
 
@@ -34,8 +31,8 @@ pub fn render_helloworld() -> ImageBuffer {
     const WIDTH: usize = 720;
     const HEIGHT: usize = 405;
     const ASPECT_RATIO: f64 = WIDTH as f64 / HEIGHT as f64;
-    const SAMPLES_PER_PIXEL: i64 = 3;
-    const MAX_RAY_CASTS: i64 = 3;
+    const SAMPLES_PER_PIXEL: i64 = 4;
+    const MAX_RAY_CASTS: i64 = 10;
 
     let camera = Camera::new(
         ASPECT_RATIO
