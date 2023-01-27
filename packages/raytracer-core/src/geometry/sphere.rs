@@ -1,8 +1,15 @@
+use std::rc::Rc;
+
+use cgmath::vec3;
+
+use crate::shader::{Material, Lambertian};
+
 use super::{ray::{Point, Ray}, RayCollidable, Collision};
 
 pub struct Sphere {
     pub center: Point,
-    pub radius: f64
+    pub radius: f64,
+    pub material: Rc<dyn Material>
 }
 
 impl RayCollidable for Sphere {
@@ -27,10 +34,12 @@ impl RayCollidable for Sphere {
             }
             let point = ray.point_at(root);
             let normal = (point - self.center) / self.radius;
+            let material = self.material.clone();
             Option::Some(Collision {
                 t: root,
                 point,
-                normal
+                normal,
+                material
             })
         }
     }
@@ -38,6 +47,11 @@ impl RayCollidable for Sphere {
 
 impl Sphere {
     pub fn new(center: Point, radius: f64) -> Sphere {
-        Sphere { center, radius }
+        let material = Lambertian::new(vec3(1.0, 0.0, 0.0));
+        Sphere::new_with_material(center, radius, Rc::new(material))
+    }
+
+    pub fn new_with_material(center: Point, radius: f64, material: Rc<dyn Material>) -> Sphere {
+        Sphere { center, radius, material }
     }
 }

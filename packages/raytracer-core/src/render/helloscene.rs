@@ -1,21 +1,27 @@
 use cgmath::{vec3, Vector3, InnerSpace};
 use log::debug;
 
-use crate::{image::buffer::ImageBuffer, geometry::{RayCollidable, Ray, util}, scene::new_test_world, render::camera::Camera};
+use crate::{image::buffer::ImageBuffer, geometry::{RayCollidable, Ray}, scene::new_test_world, render::camera::Camera};
 
 
 fn ray_color<T: RayCollidable>(ray: &Ray, scene: &T, min_clip: f64, max_depth: i64) -> Vector3<f64> {
     if max_depth < 0 {
         return vec3(0.0, 0.0, 0.0);
     }
-    match &scene.will_intersect(&ray, min_clip, f64::INFINITY) {
+    match scene.will_intersect(&ray, min_clip, f64::INFINITY) {
         Option::None => {
             // do nothing
         },
         Option::Some(collision) => {
-            let target = collision.point + collision.normal + util::vector::random_unit_vector();
-            let ray = Ray::new(collision.point, target - collision.point);
-            return 0.5 * ray_color(&ray, scene,  min_clip, max_depth - 1);
+            return match collision.material.scatter(ray, &collision) {
+                Option::None => vec3(0.0, 0.0, 0.0),
+                Option::Some((attenuation, scatter_ray)) => {
+                    return attenuation.zip(ray_color(&scatter_ray, scene, min_clip, max_depth - 1), |a, b| -> f64 {a * b});
+                }
+            };
+            // let target = collision.point + collision.normal + util::vector::random_unit_vector();
+            // let ray = Ray::new(collision.point, target - collision.point);
+            // return 0.5 * ray_color(&ray, scene,  min_clip, max_depth - 1);
         }
     }
 
@@ -28,8 +34,8 @@ pub fn render_helloworld() -> ImageBuffer {
     const WIDTH: usize = 720;
     const HEIGHT: usize = 405;
     const ASPECT_RATIO: f64 = WIDTH as f64 / HEIGHT as f64;
-    const SAMPLES_PER_PIXEL: i64 = 10;
-    const MAX_RAY_CASTS: i64 = 3;
+    const SAMPLES_PER_PIXEL: i64 = 100;
+    const MAX_RAY_CASTS: i64 = 10;
 
     let camera = Camera::new(
         ASPECT_RATIO

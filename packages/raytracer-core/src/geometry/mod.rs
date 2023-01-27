@@ -1,5 +1,8 @@
 //! Helper classes for working with ray collisions
 
+use std::rc::Rc;
+
+use crate::shader::Material;
 pub use self::ray::{Ray, Point, Vector};
 
 mod ray;
@@ -15,7 +18,8 @@ along the ray that the collision occurred.
 pub struct Collision {
     pub point: Point,
     pub normal: Vector,
-    pub t: f64
+    pub t: f64,
+    pub material: Rc<dyn Material>
 }
 
 // note to self: remember we aren't calculating face side here, we need to do

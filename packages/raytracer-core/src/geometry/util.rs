@@ -22,4 +22,9 @@ pub mod vector {
     pub fn unit_vector(vector: Vector) -> Vector {
         vector / cgmath::dot(vector, vector).sqrt()
     }
+
+    pub fn near_zero(vector: Vector) -> bool {
+        const EPSILON: f64 = 1e-8;
+        return cgmath::dot(vector, vector) < EPSILON;
+    }
 }

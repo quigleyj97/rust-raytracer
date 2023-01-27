@@ -2,6 +2,7 @@ pub mod image;
 pub mod render;
 pub mod geometry;
 pub mod scene;
+pub mod shader;
 
 #[cfg(feature = "wasm")]
 mod wasm_util;
