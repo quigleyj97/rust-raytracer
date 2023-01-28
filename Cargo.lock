@@ -242,6 +242,7 @@ dependencies = [
 name = "raytracer-cli"
 version = "0.1.0"
 dependencies = [
+ "cgmath",
  "log",
  "pretty_env_logger",
  "raytracer-core",

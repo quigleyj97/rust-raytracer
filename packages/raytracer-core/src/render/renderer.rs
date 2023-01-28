@@ -1,4 +1,4 @@
-use cgmath::{vec3, ElementWise, InnerSpace, Vector3};
+use cgmath::{vec3, Deg, ElementWise, InnerSpace, Vector3};
 
 use crate::{
     geometry::{Ray, RayCollidable},
@@ -14,28 +14,31 @@ use super::{
 pub struct Renderer {
     width: usize,
     height: usize,
-    #[allow(dead_code)]
-    aspect_ratio: f64,
     samples_per_pixel: usize,
     max_ray_casts: i64,
     camera: Camera,
 }
 
 impl Renderer {
-    pub fn new(width: usize, height: usize, samples_per_pixel: usize, max_ray_casts: i64) -> Self {
+    pub fn new(
+        width: usize,
+        height: usize,
+        samples_per_pixel: usize,
+        max_ray_casts: i64,
+        field_of_view: Deg<f64>,
+    ) -> Self {
         let aspect_ratio = width as f64 / height as f64;
         Self {
             width,
             height,
-            aspect_ratio,
             samples_per_pixel,
             max_ray_casts,
-            camera: Camera::new(aspect_ratio),
+            camera: Camera::new(aspect_ratio, field_of_view),
         }
     }
 
     pub fn new_from_defaults(width: usize, height: usize) -> Self {
-        Self::new(width, height, 16, 16)
+        Self::new(width, height, 16, 16, Deg(45.0))
     }
 
     pub fn render_to_buffer(
