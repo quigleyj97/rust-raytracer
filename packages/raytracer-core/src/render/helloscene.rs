@@ -17,6 +17,8 @@ pub fn render_helloworld() -> ImageBuffer {
         vec3(0.0, 1.0, 0.0),
         WIDTH as f64 / HEIGHT as f64,
         Deg(45.0),
+        2.0,
+        1.0,
     );
 
     let renderer = Renderer::new_from_defaults(WIDTH, HEIGHT, camera);

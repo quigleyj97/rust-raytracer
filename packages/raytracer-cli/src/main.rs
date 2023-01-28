@@ -1,6 +1,6 @@
 use std::{thread::JoinHandle, time::SystemTime};
 
-use cgmath::{point3, vec3, Deg};
+use cgmath::{point3, vec3, Deg, InnerSpace};
 use log::{debug, info};
 use raytracer_core::{
     image::{
@@ -15,8 +15,8 @@ use raytracer_core::{
 fn main() {
     pretty_env_logger::init();
     const THREADS: usize = 8;
-    const WIDTH: usize = 720; //1280;
-    const HEIGHT: usize = 405; // 720;
+    const WIDTH: usize = /*720; */ 1280;
+    const HEIGHT: usize = /*405; */ 720;
     const SAMPLES_PER_PIXEL: usize = 100;
     const MAX_RAY_DEPTH: i64 = 20;
 
@@ -30,12 +30,16 @@ fn main() {
     for chunk in ChunkedPixelIterator::with_chunks(WIDTH, HEIGHT, THREADS) {
         info!("Spawning thread...");
         threadpool.push(std::thread::spawn(move || -> ImageBuffer {
+            let camera_position = point3(3.0, 3.0, 2.0);
+            let look_at = point3(0.0, 0.0, -1.0);
             let camera = Camera::new(
-                point3(-2.0, 2.0, 1.0),
-                point3(0.0, 0.0, -1.0),
+                camera_position,
+                look_at,
                 vec3(0.0, 1.0, 0.0),
                 WIDTH as f64 / HEIGHT as f64,
-                Deg(90.0),
+                Deg(20.0),
+                22.0,
+                (look_at - camera_position).magnitude(),
             );
             let renderer = Renderer::new(WIDTH, HEIGHT, SAMPLES_PER_PIXEL, MAX_RAY_DEPTH, camera);
             let mut buf = ImageBuffer::new_rgb(WIDTH, HEIGHT);

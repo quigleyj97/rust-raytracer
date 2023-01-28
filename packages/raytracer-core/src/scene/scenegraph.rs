@@ -2,10 +2,13 @@ use std::sync::Arc;
 
 use cgmath::{point3, vec3};
 
-use crate::{geometry::{sphere::Sphere, RayCollidable, Ray, Collision}, shader::{Lambertian, Metallic, Dielectric}};
+use crate::{
+    geometry::{sphere::Sphere, Collision, Ray, RayCollidable},
+    shader::{Dielectric, Lambertian, Metallic},
+};
 
 pub struct SceneGraph {
-    objects: Vec<Box<dyn RayCollidable + Send + Sync>>
+    objects: Vec<Box<dyn RayCollidable + Send + Sync>>,
 }
 
 impl RayCollidable for SceneGraph {
@@ -15,7 +18,7 @@ impl RayCollidable for SceneGraph {
 
         for object in &self.objects {
             match object.will_intersect(ray, t_min, closest_hit) {
-                None => {},
+                None => {}
                 Some(i_collision) => {
                     closest_hit = i_collision.t;
                     collision = Some(i_collision);
@@ -34,19 +37,18 @@ pub fn new_test_world() -> SceneGraph {
             Box::new(Sphere::new_with_material(
                 point3(0.0, -100.5, -1.0),
                 100.0,
-                Arc::new(Lambertian::new(vec3(0.0, 1.0, 0.0)))
+                Arc::new(Lambertian::new(vec3(0.2, 0.7, 0.1))),
             )),
             Box::new(Sphere::new_with_material(
                 point3(-1.0, 0.0, -1.0),
-                0.5, 
-                Arc::new(Metallic::new(vec3(0.7, 0.7, 1.0), 0.0))
+                0.5,
+                Arc::new(Metallic::new(vec3(0.7, 0.7, 1.0), 0.0)),
             )),
             Box::new(Sphere::new_with_material(
                 point3(1.1, 0.0, -1.0),
                 0.5,
-                Arc::new(Dielectric::new(1.5))
-            ))
-        ]
+                Arc::new(Dielectric::new(1.5)),
+            )),
+        ],
     }
 }
-

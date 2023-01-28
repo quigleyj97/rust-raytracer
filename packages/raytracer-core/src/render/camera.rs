@@ -2,20 +2,31 @@
 
 use cgmath::{Angle, Deg, InnerSpace};
 
-use crate::geometry::{Point, Ray, Vector};
+use crate::geometry::{util, Point, Ray, Vector};
 pub struct Camera {
     origin: Point,
+    // The below props are all calculated
     lower_left_corner: Point,
     horizontal: Vector,
     vertical: Vector,
+    /// Radius of the lens used in the thin-lens bokeh
+    lens_radius: f64,
+    /// The horizontal basis vector in film plane (or screen) space
+    screen_u: Vector,
+    /// The vertical basis vector in film plane (or screen) space
+    screen_v: Vector,
+    /// A vector pointing away from the camera that is normal to the film plane
+    _inverse_camera_direction: Vector,
 }
 
 impl Camera {
     /// Project a ray into space from a UV screenspace coordinate
     pub fn project_ray(&self, u: f64, v: f64) -> Ray {
+        let Vector { x, y, z: _ } = self.lens_radius * util::vector::random_vector_in_disk();
+        let offset = self.screen_u * x + self.screen_v * y;
         Ray::new(
-            self.origin,
-            self.lower_left_corner + u * self.horizontal + v * self.vertical - self.origin,
+            self.origin + offset,
+            self.lower_left_corner + u * self.horizontal + v * self.vertical - self.origin - offset,
         )
     }
 
@@ -25,6 +36,8 @@ impl Camera {
         local_up: Vector,
         aspect_ratio: f64,
         field_of_view: Deg<f64>,
+        aperture_f_stop: f64,
+        focal_length: f64,
     ) -> Camera {
         let height = -2.0 * (field_of_view / 2.0).tan();
         let width = aspect_ratio * height;
@@ -33,19 +46,23 @@ impl Camera {
         let screen_u = local_up.cross(inverse_camera_direction).normalize();
         let screen_v = inverse_camera_direction.cross(screen_u);
 
-        let _focal_length = 1.0;
-
         let origin = camera_position;
-        let horizontal = width * screen_u;
-        let vertical = height * screen_v;
+        let horizontal = focal_length * width * screen_u;
+        let vertical = focal_length * height * screen_v;
         let lower_left_corner =
-            origin - horizontal / 2.0 - vertical / 2.0 - inverse_camera_direction;
+            origin - horizontal / 2.0 - vertical / 2.0 - focal_length * inverse_camera_direction;
+
+        let lens_radius = 1.0 / (aperture_f_stop);
 
         Camera {
             origin,
             horizontal,
             vertical,
             lower_left_corner,
+            lens_radius,
+            _inverse_camera_direction: inverse_camera_direction,
+            screen_u,
+            screen_v,
         }
     }
 }
