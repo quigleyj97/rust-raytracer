@@ -1,5 +1,6 @@
 pub struct PixelIterator {
     width: usize,
+    #[allow(dead_code)]
     height: usize,
     idx: usize,
     max_size: usize

@@ -7,6 +7,7 @@ use super::{camera::Camera, iter::{PixelIterator, Pixel}};
 pub struct Renderer {
     width: usize,
     height: usize, 
+    #[allow(dead_code)]
     aspect_ratio: f64,
     samples_per_pixel: usize,
     max_ray_casts: i64,
