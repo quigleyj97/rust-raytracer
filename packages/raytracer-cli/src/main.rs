@@ -1,6 +1,6 @@
 use std::{thread::JoinHandle, time::SystemTime};
 
-use cgmath::Deg;
+use cgmath::{point3, vec3, Deg};
 use log::{debug, info};
 use raytracer_core::{
     image::{
@@ -8,7 +8,7 @@ use raytracer_core::{
         buffer::ImageBuffer,
         ppm,
     },
-    render::{iter::ChunkedPixelIterator, renderer::Renderer},
+    render::{camera::Camera, iter::ChunkedPixelIterator, renderer::Renderer},
     scene::new_test_world,
 };
 
@@ -30,8 +30,14 @@ fn main() {
     for chunk in ChunkedPixelIterator::with_chunks(WIDTH, HEIGHT, THREADS) {
         info!("Spawning thread...");
         threadpool.push(std::thread::spawn(move || -> ImageBuffer {
-            let renderer =
-                Renderer::new(WIDTH, HEIGHT, SAMPLES_PER_PIXEL, MAX_RAY_DEPTH, Deg(90.0));
+            let camera = Camera::new(
+                point3(-2.0, 2.0, 1.0),
+                point3(0.0, 0.0, -1.0),
+                vec3(0.0, 1.0, 0.0),
+                WIDTH as f64 / HEIGHT as f64,
+                Deg(90.0),
+            );
+            let renderer = Renderer::new(WIDTH, HEIGHT, SAMPLES_PER_PIXEL, MAX_RAY_DEPTH, camera);
             let mut buf = ImageBuffer::new_rgb(WIDTH, HEIGHT);
             let scene = new_test_world();
             renderer.render_to_buffer(&scene, &mut buf, chunk);

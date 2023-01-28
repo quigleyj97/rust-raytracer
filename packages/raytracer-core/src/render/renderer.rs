@@ -1,4 +1,4 @@
-use cgmath::{vec3, Deg, ElementWise, InnerSpace, Vector3};
+use cgmath::{vec3, ElementWise, InnerSpace, Vector3};
 
 use crate::{
     geometry::{Ray, RayCollidable},
@@ -25,20 +25,19 @@ impl Renderer {
         height: usize,
         samples_per_pixel: usize,
         max_ray_casts: i64,
-        field_of_view: Deg<f64>,
+        camera: Camera,
     ) -> Self {
-        let aspect_ratio = width as f64 / height as f64;
         Self {
             width,
             height,
             samples_per_pixel,
             max_ray_casts,
-            camera: Camera::new(aspect_ratio, field_of_view),
+            camera,
         }
     }
 
-    pub fn new_from_defaults(width: usize, height: usize) -> Self {
-        Self::new(width, height, 16, 16, Deg(45.0))
+    pub fn new_from_defaults(width: usize, height: usize, camera: Camera) -> Self {
+        Self::new(width, height, 16, 16, camera)
     }
 
     pub fn render_to_buffer(

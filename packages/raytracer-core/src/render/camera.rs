@@ -1,6 +1,6 @@
 //! Projects rays into a space that correspond to UV screen coordinates
 
-use cgmath::{point3, vec3, Angle, Deg};
+use cgmath::{Angle, Deg, InnerSpace};
 
 use crate::geometry::{Point, Ray, Vector};
 pub struct Camera {
@@ -19,17 +19,27 @@ impl Camera {
         )
     }
 
-    pub fn new(aspect_ratio: f64, field_of_view: Deg<f64>) -> Camera {
-        let height = -2.0 * (field_of_view / 2.0).cos();
+    pub fn new(
+        camera_position: Point,
+        look_at: Point,
+        local_up: Vector,
+        aspect_ratio: f64,
+        field_of_view: Deg<f64>,
+    ) -> Camera {
+        let height = -2.0 * (field_of_view / 2.0).tan();
         let width = aspect_ratio * height;
 
-        let focal_length = 1.0;
+        let inverse_camera_direction = (camera_position - look_at).normalize();
+        let screen_u = local_up.cross(inverse_camera_direction).normalize();
+        let screen_v = inverse_camera_direction.cross(screen_u);
 
-        let origin = point3(0.0, 0.0, 0.0);
-        let horizontal = vec3(width, 0.0, 0.0);
-        let vertical = vec3(0.0, height, 0.0);
+        let _focal_length = 1.0;
+
+        let origin = camera_position;
+        let horizontal = width * screen_u;
+        let vertical = height * screen_v;
         let lower_left_corner =
-            origin - horizontal / 2.0 - vertical / 2.0 - vec3(0.0, 0.0, focal_length);
+            origin - horizontal / 2.0 - vertical / 2.0 - inverse_camera_direction;
 
         Camera {
             origin,
