@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use cgmath::{point3, vec3};
 
-use crate::{geometry::{sphere::Sphere, RayCollidable, Ray, Collision}, shader::{Lambertian, Metallic}};
+use crate::{geometry::{sphere::Sphere, RayCollidable, Ray, Collision}, shader::{Lambertian, Metallic, Dielectric}};
 
 pub struct SceneGraph {
     objects: Vec<Box<dyn RayCollidable + Send + Sync>>
@@ -39,12 +39,12 @@ pub fn new_test_world() -> SceneGraph {
             Box::new(Sphere::new_with_material(
                 point3(-1.0, 0.0, -1.0),
                 0.5, 
-                Arc::new(Metallic::new(vec3(0.7, 0.7, 1.0), 0.3))
+                Arc::new(Metallic::new(vec3(0.7, 0.7, 1.0), 0.0))
             )),
             Box::new(Sphere::new_with_material(
                 point3(1.1, 0.0, -1.0),
                 0.5,
-                Arc::new(Metallic::new(vec3(0.4, 0.4, 0.4), 0.0))
+                Arc::new(Dielectric::new(1.5))
             ))
         ]
     }

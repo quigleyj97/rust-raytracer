@@ -63,6 +63,7 @@ impl Iterator for ChunkedPixelIterator {
                 max_size: idx + chunk_size
             })
         } else {
+            self.current_chunk = 0;
             Option::None
         }
     }

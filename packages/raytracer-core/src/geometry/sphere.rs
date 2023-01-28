@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use cgmath::vec3;
+use cgmath::{vec3, InnerSpace};
 
 use crate::shader::{Material, Lambertian};
 
@@ -15,9 +15,9 @@ pub struct Sphere {
 impl RayCollidable for Sphere {
     fn will_intersect(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<Collision> {
         let oc_segment = ray.origin - self.center;
-        let a = cgmath::dot(ray.direction, ray.direction);
+        let a = ray.direction.magnitude2();
         let half_b = cgmath::dot(oc_segment, ray.direction);
-        let c = cgmath::dot(oc_segment, oc_segment) - self.radius * self.radius;
+        let c = oc_segment.magnitude2() - self.radius * self.radius;
         let discriminant = half_b * half_b - a * c;
         if discriminant < 0.0 {
             Option::None
