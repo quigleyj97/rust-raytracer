@@ -3,3 +3,6 @@ members = [
     'packages/raytracer-core',
     'packages/raytracer-cli'
 ]
+
+[profile.release]
+debug = true

@@ -1,4 +1,4 @@
-use std::{thread::JoinHandle, time::SystemTime};
+use std::{sync::Arc, thread::JoinHandle, time::SystemTime};
 
 use cgmath::{point3, vec3, Deg, InnerSpace};
 use log::{debug, info};
@@ -9,7 +9,7 @@ use raytracer_core::{
         ppm,
     },
     render::{camera::Camera, iter::ChunkedPixelIterator, renderer::Renderer},
-    scene::new_test_world,
+    scene,
 };
 
 fn main() {
@@ -27,11 +27,17 @@ fn main() {
 
     let mut threadpool = Vec::<JoinHandle<ImageBuffer>>::new();
 
+    let scene = Arc::new(scene::new_random_world());
+
     for chunk in ChunkedPixelIterator::with_chunks(WIDTH, HEIGHT, THREADS) {
         info!("Spawning thread...");
+        // make a copy of the world specific to each thread
+        // this helps the borrow checker see the move into the thread, without
+        // having it try to move the top-level object.
+        let local_scene = scene.clone();
         threadpool.push(std::thread::spawn(move || -> ImageBuffer {
-            let camera_position = point3(3.0, 3.0, 2.0);
-            let look_at = point3(0.0, 0.0, -1.0);
+            let camera_position = point3(13.0, 2.0, 3.0);
+            let look_at = point3(0.0, 0.0, 0.0);
             let camera = Camera::new(
                 camera_position,
                 look_at,
@@ -43,8 +49,7 @@ fn main() {
             );
             let renderer = Renderer::new(WIDTH, HEIGHT, SAMPLES_PER_PIXEL, MAX_RAY_DEPTH, camera);
             let mut buf = ImageBuffer::new_rgb(WIDTH, HEIGHT);
-            let scene = new_test_world();
-            renderer.render_to_buffer(&scene, &mut buf, chunk);
+            renderer.render_to_buffer(&local_scene, &mut buf, chunk);
             buf
         }));
     }
