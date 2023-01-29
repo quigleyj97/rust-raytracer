@@ -22,3 +22,6 @@ crate-type = ["cdylib", "rlib"]
 
 [features]
 wasm = ["dep:wasm-bindgen", "dep:js-sys", "dep:console_error_panic_hook", "dep:console_log", "getrandom/js"]
+
+[profile.release]
+debug = true

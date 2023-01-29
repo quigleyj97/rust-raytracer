@@ -1,11 +1,11 @@
-use cgmath::{Vector3, Point3};
+use cgmath::{Point3, Vector3};
 
 pub type Vector = Vector3<f64>;
 pub type Point = Point3<f64>;
 
 pub struct Ray {
     pub origin: Point,
-    pub direction: Vector
+    pub direction: Vector,
 }
 
 impl Ray {
@@ -14,9 +14,6 @@ impl Ray {
     }
 
     pub fn new(origin: Point, direction: Vector) -> Ray {
-        Ray {
-            origin,
-            direction
-        }
+        Ray { origin, direction }
     }
 }

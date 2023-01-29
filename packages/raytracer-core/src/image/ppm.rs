@@ -1,5 +1,5 @@
 //! PPM is a simplistic, textual bitmap image format
-//! 
+//!
 //! eg,
 //! ```text
 //! P3
@@ -8,7 +8,7 @@
 //! 255 0   0   0   255 0   0   0   255
 //! 255 255 0   255 255 255 0   0   0
 //! ```
-//! 
+//!
 //! is a valid 3pxx2px image of ASCII triplets read left-to-right, top-to-
 //! bottom.
 
@@ -18,7 +18,7 @@ const IMG_STRIDE: usize = 3;
 
 pub fn make_image(bitmap: &Vec<u8>, width: usize, height: usize) -> String {
     let header = format!("{}\n{}\t{}\n{}", PPM_HEADER, width, height, PPM_BITDEPTH);
-    let mut outputs = vec!(header);
+    let mut outputs = vec![header];
     let length = width * height;
     for i in 0..length {
         let idx = i * IMG_STRIDE;
@@ -47,12 +47,10 @@ mod tests {
 
     #[test]
     fn writes_simple_image() {
-        let test_bitmap = vec!(
-            255, 0,   0,   0,   255, 0,   0,   0,   255,
-            255, 255, 0,   255, 255, 255, 0,   0,   0,
-        );
+        let test_bitmap = vec![
+            255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0,
+        ];
         let result = make_image(&test_bitmap, 3, 2);
         assert_eq!(result, TEST_IMAGE.to_string());
     }
 }
-

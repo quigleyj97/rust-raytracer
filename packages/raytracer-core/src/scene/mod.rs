@@ -1,4 +1,3 @@
 mod scenegraph;
 
-pub use scenegraph::{SceneGraph, new_test_world};
-
+pub use scenegraph::{new_test_world, SceneGraph};

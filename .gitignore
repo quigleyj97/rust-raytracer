@@ -1,6 +1,8 @@
 target
 .vscode
 *.ppm
+*.trace
+*.svg
 
 node_modules
 .DS_Store

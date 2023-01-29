@@ -3,18 +3,23 @@ pub struct PixelIterator {
     #[allow(dead_code)]
     height: usize,
     idx: usize,
-    max_size: usize
+    max_size: usize,
 }
 
 impl PixelIterator {
     pub fn new(width: usize, height: usize) -> Self {
-        Self { width, height, idx: 0, max_size: width * height }
+        Self {
+            width,
+            height,
+            idx: 0,
+            max_size: width * height,
+        }
     }
 }
 
 pub struct Pixel {
     pub x: usize,
-    pub y: usize
+    pub y: usize,
 }
 
 impl Iterator for PixelIterator {
@@ -23,13 +28,15 @@ impl Iterator for PixelIterator {
     fn next(&mut self) -> Option<Self::Item> {
         let idx = self.idx;
         self.idx += 1;
-        return if idx < self.max_size { Some(Pixel {
-            x: idx % self.width,
-            y: idx / self.width
-        }) } else { 
+        return if idx < self.max_size {
+            Some(Pixel {
+                x: idx % self.width,
+                y: idx / self.width,
+            })
+        } else {
             self.idx = 0;
             None
-        }
+        };
     }
 }
 
@@ -42,7 +49,12 @@ pub struct ChunkedPixelIterator {
 
 impl ChunkedPixelIterator {
     pub fn with_chunks(width: usize, height: usize, n_chunks: usize) -> ChunkedPixelIterator {
-        ChunkedPixelIterator { width, height, chunks: n_chunks, current_chunk: 0 }
+        ChunkedPixelIterator {
+            width,
+            height,
+            chunks: n_chunks,
+            current_chunk: 0,
+        }
     }
 }
 
@@ -61,11 +73,11 @@ impl Iterator for ChunkedPixelIterator {
                 width: self.width,
                 height: self.height,
                 idx,
-                max_size: idx + chunk_size
+                max_size: idx + chunk_size,
             })
         } else {
             self.current_chunk = 0;
             Option::None
-        }
+        };
     }
 }

@@ -1,5 +1,5 @@
-mod helloscene;
 pub mod camera;
+mod helloscene;
 pub mod iter;
 pub mod renderer;
 

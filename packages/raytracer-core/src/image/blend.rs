@@ -1,7 +1,7 @@
 use super::buffer::ImageBuffer;
 
 pub enum BlendingMode {
-    Add
+    Add,
 }
 
 pub fn blend_images(images: Vec<ImageBuffer>, blending_mode: BlendingMode) -> ImageBuffer {
@@ -25,4 +25,4 @@ pub fn blend_images(images: Vec<ImageBuffer>, blending_mode: BlendingMode) -> Im
     }
 
     output
-} 
+}

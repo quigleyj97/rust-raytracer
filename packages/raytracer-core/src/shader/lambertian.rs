@@ -1,9 +1,12 @@
-use crate::geometry::{Vector, Ray, Collision, util::vector::{random_unit_vector, near_zero}};
+use crate::geometry::{
+    util::vector::{near_zero, random_unit_vector},
+    Collision, Ray, Vector,
+};
 
 use super::Material;
 
 pub struct Lambertian {
-    albedo: Vector
+    albedo: Vector,
 }
 
 impl Material for Lambertian {

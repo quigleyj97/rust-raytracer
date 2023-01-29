@@ -1,9 +1,9 @@
-mod material;
-mod lambertian;
-mod metallic;
 mod dielectric;
+mod lambertian;
+mod material;
+mod metallic;
 
-pub use material::Material;
-pub use lambertian::Lambertian;
-pub use metallic::Metallic;
 pub use dielectric::Dielectric;
+pub use lambertian::Lambertian;
+pub use material::Material;
+pub use metallic::Metallic;

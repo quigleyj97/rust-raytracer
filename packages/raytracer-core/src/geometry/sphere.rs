@@ -2,14 +2,17 @@ use std::sync::Arc;
 
 use cgmath::{vec3, InnerSpace};
 
-use crate::shader::{Material, Lambertian};
+use crate::shader::{Lambertian, Material};
 
-use super::{ray::{Point, Ray}, RayCollidable, Collision};
+use super::{
+    ray::{Point, Ray},
+    Collision, RayCollidable,
+};
 
 pub struct Sphere {
     pub center: Point,
     pub radius: f64,
-    pub material: Arc<dyn Material + Send + Sync>
+    pub material: Arc<dyn Material + Send + Sync>,
 }
 
 impl RayCollidable for Sphere {
@@ -29,7 +32,7 @@ impl RayCollidable for Sphere {
             if root < t_min || t_max < root {
                 root = (-half_b + sqrt_discriminant) / a;
                 if root < t_min || t_max < root {
-                    return Option::None
+                    return Option::None;
                 }
             }
             let point = ray.point_at(root);
@@ -39,7 +42,7 @@ impl RayCollidable for Sphere {
                 t: root,
                 point,
                 normal,
-                material
+                material,
             })
         }
     }
@@ -51,7 +54,15 @@ impl Sphere {
         Sphere::new_with_material(center, radius, Arc::new(material))
     }
 
-    pub fn new_with_material(center: Point, radius: f64, material: Arc<dyn Material + Send + Sync>) -> Sphere {
-        Sphere { center, radius, material }
+    pub fn new_with_material(
+        center: Point,
+        radius: f64,
+        material: Arc<dyn Material + Send + Sync>,
+    ) -> Sphere {
+        Sphere {
+            center,
+            radius,
+            material,
+        }
     }
 }

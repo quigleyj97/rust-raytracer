@@ -1,5 +1,5 @@
 //! Helper class for modelling u8 image buffers with width, height, and stride.
-//! 
+//!
 //! Stride defaults to 3 if not provided, for an RGB format. Use 4 to include
 //! an alpha channel, for eg RGBA.
 
@@ -7,7 +7,7 @@
 pub mod BufferFormat {
     #[derive(Debug, PartialEq)]
     pub struct Metadata {
-        pub stride: usize
+        pub stride: usize,
     }
 
     pub const RGB8: Metadata = Metadata { stride: 3 };
@@ -20,7 +20,7 @@ pub struct ImageBuffer {
     pub data: Vec<u8>,
     pub width: usize,
     pub height: usize,
-    pub format: BufferFormat::Metadata
+    pub format: BufferFormat::Metadata,
 }
 
 impl ImageBuffer {
@@ -30,7 +30,7 @@ impl ImageBuffer {
             width,
             height,
             format,
-            data: vec!(0u8; width * height * stride)
+            data: vec![0u8; width * height * stride],
         }
     }
 
@@ -44,10 +44,13 @@ impl ImageBuffer {
 }
 
 pub mod convert {
-    use super::{ImageBuffer, BufferFormat};
+    use super::{BufferFormat, ImageBuffer};
 
     pub fn rgb_to_rgba(rgb_buffer: &ImageBuffer, fill: u8) -> ImageBuffer {
-        assert!(rgb_buffer.format == BufferFormat::RGB8, "FROM buffer must be in RGB8");
+        assert!(
+            rgb_buffer.format == BufferFormat::RGB8,
+            "FROM buffer must be in RGB8"
+        );
         let width = rgb_buffer.width;
         let height = rgb_buffer.height;
         let n_pixels = width * height;
@@ -68,14 +71,14 @@ pub mod convert {
             data: new_buffer,
             width,
             height,
-            format: BufferFormat::RGBA8
-    }
+            format: BufferFormat::RGBA8,
+        }
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{ImageBuffer, BufferFormat, convert};
+    use super::{convert, BufferFormat, ImageBuffer};
 
     #[test]
     fn given_valid_rgb8_image_when_convert_rgba8_then_returns_buffer() {
@@ -83,11 +86,10 @@ mod tests {
             width: 3,
             height: 3,
             data: vec![
-                1,  2,  3,      4,  5,  6,      7,  8,  9,
-                11, 12, 13,     14, 15, 16,     17, 18, 19,
-                21, 22, 23,     24, 25, 26,     27, 28, 29,
+                1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25,
+                26, 27, 28, 29,
             ],
-            format: BufferFormat::RGB8
+            format: BufferFormat::RGB8,
         };
 
         let reference_output = ImageBuffer {
@@ -95,10 +97,9 @@ mod tests {
             height: 3,
             format: BufferFormat::RGBA8,
             data: vec![
-                1,  2,  3,  42, 4,  5,  6,  42,  7,  8,  9, 42,
-                11, 12, 13, 42, 14, 15, 16, 42,  17, 18, 19,42,
-                21, 22, 23, 42, 24, 25, 26, 42,  27, 28, 29,42
-            ]
+                1, 2, 3, 42, 4, 5, 6, 42, 7, 8, 9, 42, 11, 12, 13, 42, 14, 15, 16, 42, 17, 18, 19,
+                42, 21, 22, 23, 42, 24, 25, 26, 42, 27, 28, 29, 42,
+            ],
         };
 
         let converted_image = convert::rgb_to_rgba(&test_image, 42);
