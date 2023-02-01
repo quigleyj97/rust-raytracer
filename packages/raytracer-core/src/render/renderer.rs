@@ -46,13 +46,14 @@ impl Renderer {
         buf: &mut ImageBuffer,
         iterator: PixelIterator,
     ) {
+        let rng = fastrand::Rng::new();
         for Pixel { x, y } in iterator {
             let i = x;
             let j = y;
             let mut color = vec3(0.0, 0.0, 0.0);
             for _ in 0..self.samples_per_pixel {
-                let u: f64 = ((i as f64) + rand::random::<f64>()) / (self.width - 1) as f64;
-                let v: f64 = ((j as f64) + rand::random::<f64>()) / (self.height - 1) as f64;
+                let u: f64 = ((i as f64) + rng.f64()) / (self.width - 1) as f64;
+                let v: f64 = ((j as f64) + rng.f64()) / (self.height - 1) as f64;
                 let ray = self.camera.project_ray(u, v);
                 color += ray_color(&ray, scene, 0.001, self.max_ray_casts);
             }

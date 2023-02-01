@@ -2,8 +2,6 @@ use std::sync::Arc;
 
 use cgmath::{point3, vec3, InnerSpace};
 
-use rand::prelude::*;
-
 use crate::{
     geometry::{sphere::Sphere, Collision, Ray, RayCollidable, Vector},
     shader::{Dielectric, Lambertian, Material, Metallic},
@@ -65,25 +63,21 @@ pub fn new_random_world() -> SceneGraph {
 
     let mut objects: Vec<Arc<dyn RayCollidable + Send + Sync>> = vec![ground];
 
-    let mut rand = rand::thread_rng();
+    let rng = fastrand::Rng::new();
 
     for a in -11..11 {
         for b in -11..11 {
-            let choose_material: f64 = rand.gen();
-            let center = point3(
-                a as f64 + 0.9 * rand.gen::<f64>(),
-                0.2,
-                b as f64 + 0.9 * rand.gen::<f64>(),
-            );
+            let choose_material: f64 = rng.f64();
+            let center = point3(a as f64 + 0.9 * rng.f64(), 0.2, b as f64 + 0.9 * rng.f64());
 
             if (center - point3(4.0, 0.2, 0.0)).magnitude() > 0.9 {
                 let material: Arc<dyn Material + Send + Sync>;
                 if choose_material < 0.8 {
-                    let albedo: Vector = vec3(rand.gen(), rand.gen(), rand.gen());
+                    let albedo: Vector = vec3(rng.f64(), rng.f64(), rng.f64());
                     material = Arc::new(Lambertian::new(albedo));
                 } else if choose_material < 0.95 {
-                    let albedo: Vector = vec3(rand.gen(), rand.gen(), rand.gen());
-                    let fuzz = rand.gen::<f64>() / 2.0;
+                    let albedo: Vector = vec3(rng.f64(), rng.f64(), rng.f64());
+                    let fuzz = rng.f64() / 2.0;
                     material = Arc::new(Metallic::new(albedo, fuzz));
                 } else {
                     material = Arc::new(Dielectric::new(1.5));

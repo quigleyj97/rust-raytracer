@@ -46,8 +46,7 @@ impl Material for Dielectric {
         let sin_theta = f64::sqrt(1.0 - cos_theta * cos_theta);
 
         let can_refract = refractive_ratio * sin_theta <= 1.0;
-        let should_reflect =
-            Dielectric::reflectance(cos_theta, refractive_ratio) > rand::random::<f64>();
+        let should_reflect = Dielectric::reflectance(cos_theta, refractive_ratio) > fastrand::f64();
         let refracted_ray_direction = if can_refract && !should_reflect {
             refract_hack(
                 ray.direction.normalize(),

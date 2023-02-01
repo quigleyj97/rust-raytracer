@@ -93,6 +93,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "fastrand"
+version = "1.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a7a407cfaa3385c4ae6b23e84623d48c2798d06e3e6a1878f7f59f17b3f86499"
+dependencies = [
+ "instant",
+]
+
+[[package]]
 name = "getrandom"
 version = "0.2.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -121,6 +130,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "df004cfca50ef23c36850aaaa59ad52cc70d0e90243c3c7737a4dd32dc7a3c4f"
 dependencies = [
  "quick-error",
+]
+
+[[package]]
+name = "instant"
+version = "0.1.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7a5bbe824c507c5da5956355e86a746d82e0e1464f65d862cc5e71da70e94b2c"
+dependencies = [
+ "cfg-if",
 ]
 
 [[package]]
@@ -239,6 +257,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "raytracer-benchmarks"
+version = "0.1.0"
+dependencies = [
+ "cgmath",
+ "fastrand",
+ "log",
+ "pretty_env_logger",
+ "rand",
+ "raytracer-core",
+]
+
+[[package]]
 name = "raytracer-cli"
 version = "0.1.0"
 dependencies = [
@@ -255,6 +285,7 @@ dependencies = [
  "cgmath",
  "console_error_panic_hook",
  "console_log",
+ "fastrand",
  "getrandom",
  "js-sys",
  "log",

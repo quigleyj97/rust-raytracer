@@ -15,10 +15,12 @@ use raytracer_core::{
 fn main() {
     pretty_env_logger::init();
     const THREADS: usize = 8;
-    const WIDTH: usize = /*720; */ 1280;
-    const HEIGHT: usize = /*405; */ 720;
-    const SAMPLES_PER_PIXEL: usize = 100;
-    const MAX_RAY_DEPTH: i64 = 20;
+    const WIDTH: usize = 1280;
+    // const WIDTH: usize = 720;
+    const HEIGHT: usize = 720;
+    // const HEIGHT: usize = 405;
+    const SAMPLES_PER_PIXEL: usize = 1;
+    const MAX_RAY_DEPTH: i64 = 4;
 
     debug!("Output dimensions: {} x {}", WIDTH, HEIGHT);
 
