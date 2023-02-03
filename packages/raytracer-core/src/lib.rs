@@ -1,3 +1,5 @@
+#![feature(portable_simd)]
+
 pub mod geometry;
 pub mod image;
 pub mod render;

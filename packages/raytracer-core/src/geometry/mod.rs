@@ -8,6 +8,7 @@ use crate::shader::Material;
 mod ray;
 pub mod sphere;
 pub mod util;
+pub mod simd_sphere;
 
 /** An object representing a collision between a ray and a `RayCollidable`
 
