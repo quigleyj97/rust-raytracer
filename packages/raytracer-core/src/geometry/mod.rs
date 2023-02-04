@@ -5,10 +5,11 @@ use std::sync::Arc;
 pub use self::ray::{Point, Ray, Vector};
 use crate::shader::Material;
 
+pub mod f32_sphere;
 mod ray;
+pub mod simd_sphere;
 pub mod sphere;
 pub mod util;
-pub mod simd_sphere;
 
 /** An object representing a collision between a ray and a `RayCollidable`
 

@@ -1,23 +1,31 @@
-use std::simd::{f64x4, SimdFloat, StdFloat};
+use std::simd::{f32x4, SimdFloat, StdFloat};
 
 pub struct CollisionSIMD {
-    point: f64x4,
-    normal: f64x4,
-    t: f64,
+    pub point: f32x4,
+    pub normal: f32x4,
+    pub t: f32,
 }
 
 pub struct SIMDSphere {
-    pub center: f64x4,
-    pub radius: f64,
+    pub center: f32x4,
+    pub radius: f32,
 }
 
 impl SIMDSphere {
+    pub fn new(center_x: f32, center_y: f32, center_z: f32, radius: f32) -> SIMDSphere {
+        SIMDSphere {
+            center: f32x4::from_array([center_x, center_y, center_z, 0.0]),
+            radius,
+        }
+    }
+
+    #[inline(always)]
     pub fn will_intersect_simd(
         &self,
-        ray_origin: f64x4,
-        ray_direction: f64x4,
-        t_min: f64,
-        t_max: f64,
+        ray_origin: f32x4,
+        ray_direction: f32x4,
+        t_min: f32,
+        t_max: f32,
     ) -> Option<CollisionSIMD> {
         let oc_segment = ray_origin - self.center;
         let a = (ray_direction * ray_direction).reduce_sum();
@@ -37,8 +45,8 @@ impl SIMDSphere {
                     return Option::None;
                 }
             }
-            let root_vec = f64x4::splat(root);
-            let radius = f64x4::splat(self.radius);
+            let root_vec = f32x4::splat(root);
+            let radius = f32x4::splat(self.radius);
             let point = ray_direction.mul_add(root_vec, ray_origin);
             let normal = (point - self.center) / radius;
             Option::Some(CollisionSIMD {
