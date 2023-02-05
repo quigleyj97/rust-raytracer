@@ -3,13 +3,13 @@ use std::sync::Arc;
 use cgmath::{point3, vec3, InnerSpace};
 
 use crate::{
-    geometry::{sphere::Sphere, Collision, Ray, RayCollidable, Vector},
+    geometry::{sphere::Sphere, Collision, Geometry, Ray, RayCollidable, Vector},
     shader::{Dielectric, Lambertian, Material, Metallic},
 };
 
 #[derive(Clone)]
 pub struct SceneGraph {
-    objects: Vec<Arc<dyn RayCollidable + Send + Sync>>,
+    objects: Vec<Geometry>,
 }
 
 impl RayCollidable for SceneGraph {
@@ -34,22 +34,25 @@ impl RayCollidable for SceneGraph {
 pub fn new_test_world() -> SceneGraph {
     SceneGraph {
         objects: vec![
-            Arc::new(Sphere::new(point3(0.0, 0.0, -1.0), 0.5)),
+            Arc::new(Sphere::new(point3(0.0, 0.0, -1.0), 0.5)).into(),
             Arc::new(Sphere::new_with_material(
                 point3(0.0, -100.5, -1.0),
                 100.0,
                 Arc::new(Lambertian::new(vec3(0.2, 0.7, 0.1))),
-            )),
+            ))
+            .into(),
             Arc::new(Sphere::new_with_material(
                 point3(-1.0, 0.0, -1.0),
                 0.5,
                 Arc::new(Metallic::new(vec3(0.7, 0.7, 1.0), 0.0)),
-            )),
+            ))
+            .into(),
             Arc::new(Sphere::new_with_material(
                 point3(1.1, 0.0, -1.0),
                 0.5,
                 Arc::new(Dielectric::new(1.5)),
-            )),
+            ))
+            .into(),
         ],
     }
 }
@@ -61,7 +64,7 @@ pub fn new_random_world() -> SceneGraph {
         Arc::new(Lambertian::new(vec3(0.5, 0.5, 0.5))),
     ));
 
-    let mut objects: Vec<Arc<dyn RayCollidable + Send + Sync>> = vec![ground];
+    let mut objects: Vec<Geometry> = vec![ground.into()];
 
     let rng = fastrand::Rng::new();
 
@@ -83,28 +86,28 @@ pub fn new_random_world() -> SceneGraph {
                     material = Arc::new(Dielectric::new(1.5));
                 };
                 let object = Sphere::new_with_material(center, 0.2, material);
-                objects.push(Arc::new(object));
+                objects.push(Arc::new(object).into());
             }
         }
     }
 
     let glass_ball =
         Sphere::new_with_material(point3(0.0, 1.0, 0.0), 1.0, Arc::new(Dielectric::new(1.5)));
-    objects.push(Arc::new(glass_ball));
+    objects.push(Arc::new(glass_ball).into());
 
     let matte_ball = Sphere::new_with_material(
         point3(-4.0, 1.0, 0.0),
         1.0,
         Arc::new(Lambertian::new(vec3(0.4, 0.2, 0.1))),
     );
-    objects.push(Arc::new(matte_ball));
+    objects.push(Arc::new(matte_ball).into());
 
     let metal_ball = Sphere::new_with_material(
         point3(4.0, 1.0, 0.0),
         1.0,
         Arc::new(Metallic::new(vec3(0.7, 0.6, 0.5), 0.0)),
     );
-    objects.push(Arc::new(metal_ball));
+    objects.push(Arc::new(metal_ball).into());
 
     SceneGraph { objects }
 }
