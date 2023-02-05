@@ -2,7 +2,7 @@ use cgmath::InnerSpace;
 
 use crate::geometry::{util, Collision, Ray, Vector};
 
-use super::Material;
+use super::MaterialTrait;
 
 pub struct Metallic {
     /// The 'color' of the metal
@@ -21,7 +21,7 @@ impl Metallic {
     }
 }
 
-impl Material for Metallic {
+impl MaterialTrait for Metallic {
     fn scatter(&self, ray: &Ray, collision: &Collision) -> Option<(Vector, Ray)> {
         let reflection = Metallic::reflect(ray.direction.normalize(), collision.normal);
         return if cgmath::dot(reflection, collision.normal) > 0.0 {

@@ -3,13 +3,13 @@ use crate::geometry::{
     Collision, Ray, Vector,
 };
 
-use super::Material;
+use super::MaterialTrait;
 
 pub struct Lambertian {
     albedo: Vector,
 }
 
-impl Material for Lambertian {
+impl MaterialTrait for Lambertian {
     fn scatter(&self, _ray: &Ray, collision: &Collision) -> Option<(Vector, Ray)> {
         let mut scatter_direction = collision.normal + random_unit_vector();
 
