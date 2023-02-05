@@ -4,6 +4,7 @@ use crate::{
     geometry::{Ray, RayCollidable},
     image::buffer::ImageBuffer,
     scene::SceneGraph,
+    shader::MaterialTrait,
 };
 
 use super::{

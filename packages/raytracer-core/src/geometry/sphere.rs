@@ -12,7 +12,7 @@ use super::{
 pub struct Sphere {
     pub center: Point,
     pub radius: f64,
-    pub material: Arc<dyn Material + Send + Sync>,
+    pub material: Material,
 }
 
 impl RayCollidable for Sphere {
@@ -51,14 +51,10 @@ impl RayCollidable for Sphere {
 impl Sphere {
     pub fn new(center: Point, radius: f64) -> Sphere {
         let material = Lambertian::new(vec3(1.0, 0.0, 0.0));
-        Sphere::new_with_material(center, radius, Arc::new(material))
+        Sphere::new_with_material(center, radius, Arc::new(material).into())
     }
 
-    pub fn new_with_material(
-        center: Point,
-        radius: f64,
-        material: Arc<dyn Material + Send + Sync>,
-    ) -> Sphere {
+    pub fn new_with_material(center: Point, radius: f64, material: Material) -> Sphere {
         Sphere {
             center,
             radius,

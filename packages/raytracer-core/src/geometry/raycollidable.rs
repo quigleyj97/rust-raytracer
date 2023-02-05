@@ -14,7 +14,7 @@ pub struct Collision {
     pub point: Point,
     pub normal: Vector,
     pub t: f64,
-    pub material: Arc<dyn Material>,
+    pub material: Material,
 }
 
 // note to self: remember we aren't calculating face side here, we need to do

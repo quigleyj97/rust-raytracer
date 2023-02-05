@@ -1,7 +1,7 @@
 use crate::geometry::{Collision, Ray, Vector};
 use cgmath::{vec3, InnerSpace};
 
-use super::Material;
+use super::MaterialTrait;
 
 pub struct Dielectric {
     /// The refractive index for this material as given by Snell's Law
@@ -24,7 +24,7 @@ impl Dielectric {
     }
 }
 
-impl Material for Dielectric {
+impl MaterialTrait for Dielectric {
     fn scatter(&self, ray: &Ray, collision: &Collision) -> Option<(Vector, Ray)> {
         let is_front_face = cgmath::dot(ray.direction, collision.normal) < 0.0;
         let face_normal = if is_front_face {
