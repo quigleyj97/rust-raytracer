@@ -10,14 +10,14 @@ pub struct Lambertian {
 }
 
 impl MaterialTrait for Lambertian {
-    fn scatter(&self, _ray: &Ray, collision: &Collision) -> Option<(Vector, Ray)> {
+    fn scatter(&self, ray: &Ray, collision: &Collision) -> Option<(Vector, Ray)> {
         let mut scatter_direction = collision.normal + random_unit_vector();
 
         if near_zero(scatter_direction) {
             scatter_direction = collision.normal;
         }
 
-        let scatter = Ray::new(collision.point, scatter_direction);
+        let scatter = Ray::new(collision.point, scatter_direction, ray.time);
         return Option::Some((self.albedo, scatter));
     }
 }

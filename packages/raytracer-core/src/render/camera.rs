@@ -5,6 +5,15 @@ use cgmath::{Angle, Deg, InnerSpace};
 use crate::geometry::{util, Point, Ray, Vector};
 pub struct Camera {
     origin: Point,
+    /// The time in scene-seconds to start casting rays from
+    ///
+    /// In other words, the time the shutter opened
+    ///
+    /// In concert with time_end, this forms the time interval across which rays
+    /// will be cast into the scene. This simulates effects like motion blur.
+    time_start: f64,
+    /// The time in scene-seconds to stop casting rays at.
+    time_end: f64,
     // The below props are all calculated
     lower_left_corner: Point,
     horizontal: Vector,
@@ -24,9 +33,11 @@ impl Camera {
     pub fn project_ray(&self, u: f64, v: f64) -> Ray {
         let Vector { x, y, z: _ } = self.lens_radius * util::vector::random_vector_in_disk();
         let offset = self.screen_u * x + self.screen_v * y;
+        let time = fastrand::f64() * (self.time_end - self.time_start) + self.time_start;
         Ray::new(
             self.origin + offset,
             self.lower_left_corner + u * self.horizontal + v * self.vertical - self.origin - offset,
+            time,
         )
     }
 
@@ -38,6 +49,8 @@ impl Camera {
         field_of_view: Deg<f64>,
         aperture_f_stop: f64,
         focal_length: f64,
+        time_start: f64,
+        time_end: f64,
     ) -> Camera {
         let height = -2.0 * (field_of_view / 2.0).tan();
         let width = aspect_ratio * height;
@@ -56,6 +69,8 @@ impl Camera {
 
         Camera {
             origin,
+            time_start,
+            time_end,
             horizontal,
             vertical,
             lower_left_corner,

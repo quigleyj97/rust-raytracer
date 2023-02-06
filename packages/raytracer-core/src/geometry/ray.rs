@@ -6,6 +6,7 @@ pub type Point = Point3<f64>;
 pub struct Ray {
     pub origin: Point,
     pub direction: Vector,
+    pub time: f64,
 }
 
 impl Ray {
@@ -13,7 +14,11 @@ impl Ray {
         return self.origin + distance * self.direction;
     }
 
-    pub fn new(origin: Point, direction: Vector) -> Ray {
-        Ray { origin, direction }
+    pub fn new(origin: Point, direction: Vector, time: f64) -> Self {
+        Self {
+            origin,
+            direction,
+            time,
+        }
     }
 }

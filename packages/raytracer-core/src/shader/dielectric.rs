@@ -59,7 +59,7 @@ impl MaterialTrait for Dielectric {
         };
         return Option::Some((
             vec3(1.0, 1.0, 1.0),
-            Ray::new(collision.point, refracted_ray_direction),
+            Ray::new(collision.point, refracted_ray_direction, ray.time),
         ));
     }
 }

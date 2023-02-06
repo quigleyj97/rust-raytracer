@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use crate::shader::Material;
 
-use super::{sphere::Sphere, Point, Ray, Vector};
+use super::{moving_sphere::MovingSphere, sphere::Sphere, Point, Ray, Vector};
 
 /** An object representing a collision between a ray and a `RayCollidable`
 
@@ -35,6 +35,7 @@ pub trait RayCollidable {
 #[derive(Clone)]
 pub enum Geometry {
     Sphere(Arc<Sphere>),
+    MovingSphere(Arc<MovingSphere>),
 }
 
 impl RayCollidable for Geometry {
@@ -42,12 +43,20 @@ impl RayCollidable for Geometry {
     fn will_intersect(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<Collision> {
         match self {
             Self::Sphere(sphere) => sphere.will_intersect(ray, t_min, t_max),
+            Self::MovingSphere(sphere) => sphere.will_intersect(ray, t_min, t_max),
         }
     }
 }
 
-impl From<Arc<Sphere>> for Geometry {
-    fn from(value: Arc<Sphere>) -> Self {
-        Self::Sphere(value)
-    }
+macro_rules! make_from {
+    ($geoType:ident) => {
+        impl From<Arc<$geoType>> for Geometry {
+            fn from(value: Arc<$geoType>) -> Self {
+                Self::$geoType(value)
+            }
+        }
+    };
 }
+
+make_from!(Sphere);
+make_from!(MovingSphere);

@@ -19,6 +19,8 @@ fn benchmark_ray_casting() {
         cgmath::Deg(45.0),
         22.0,
         3.0,
+        0.0,
+        0.0,
     );
 
     info!("Projecting...");

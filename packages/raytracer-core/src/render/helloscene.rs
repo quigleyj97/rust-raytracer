@@ -19,6 +19,8 @@ pub fn render_helloworld() -> ImageBuffer {
         Deg(45.0),
         2.0,
         1.0,
+        0.0,
+        0.0,
     );
 
     let renderer = Renderer::new_from_defaults(WIDTH, HEIGHT, camera);

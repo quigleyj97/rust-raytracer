@@ -30,7 +30,7 @@ impl MaterialTrait for Metallic {
             } else {
                 reflection
             };
-            let scatter_ray = Ray::new(collision.point, reflection_fuzzed);
+            let scatter_ray = Ray::new(collision.point, reflection_fuzzed, ray.time);
             Option::Some((self.albedo, scatter_ray))
         } else {
             Option::None

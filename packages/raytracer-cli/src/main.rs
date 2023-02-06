@@ -12,9 +12,6 @@ use raytracer_core::{
     scene,
 };
 
-// start: 25s user time
-// test 1: removing vtables from geometry: 22s user time
-
 fn main() {
     pretty_env_logger::init();
     const THREADS: usize = 8;
@@ -22,7 +19,7 @@ fn main() {
     // const WIDTH: usize = 720;
     const HEIGHT: usize = 720;
     // const HEIGHT: usize = 405;
-    const SAMPLES_PER_PIXEL: usize = 4;
+    const SAMPLES_PER_PIXEL: usize = 32;
     const MAX_RAY_DEPTH: i64 = 8;
 
     debug!("Output dimensions: {} x {}", WIDTH, HEIGHT);
@@ -51,6 +48,8 @@ fn main() {
                 Deg(20.0),
                 22.0,
                 (look_at - camera_position).magnitude(),
+                0.0,
+                1.0,
             );
             let renderer = Renderer::new(WIDTH, HEIGHT, SAMPLES_PER_PIXEL, MAX_RAY_DEPTH, camera);
             let mut buf = ImageBuffer::new_rgb(WIDTH, HEIGHT);
