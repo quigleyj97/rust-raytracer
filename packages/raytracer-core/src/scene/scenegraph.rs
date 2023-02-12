@@ -4,8 +4,10 @@ use cgmath::{point3, vec3, InnerSpace};
 
 use crate::{
     geometry::{
-        moving_sphere::MovingSphere, sphere::Sphere, Collision, Geometry, Ray, RayCollidable,
-        Vector,
+        aabb::{AxisAlignedBoundingBox, AABB},
+        moving_sphere::MovingSphere,
+        sphere::Sphere,
+        Collision, Geometry, Ray, RayCollidable, Vector,
     },
     shader::{Dielectric, Lambertian, Material, Metallic},
 };
@@ -31,6 +33,28 @@ impl RayCollidable for SceneGraph {
         }
 
         collision
+    }
+
+    fn get_bounds(&self, time_start: f64, time_end: f64) -> Option<AxisAlignedBoundingBox> {
+        if self.objects.is_empty() {
+            return Option::None;
+        }
+        let first_object_bounds = self.objects[0].get_bounds(time_start, time_end);
+        let mut bounds: AABB;
+        if let Option::Some(first_obj_bounds) = first_object_bounds {
+            bounds = first_obj_bounds
+        } else {
+            return Option::None;
+        }
+        for object in &self.objects[1..] {
+            let object_bound = object.get_bounds(time_start, time_end);
+            if let Option::Some(aabb) = object_bound {
+                bounds = bounds.bounding_box(&aabb);
+            } else {
+                return Option::None;
+            }
+        }
+        return Option::Some(bounds);
     }
 }
 

@@ -1,10 +1,11 @@
 use std::sync::Arc;
 
-use cgmath::{vec3, InnerSpace};
+use cgmath::{vec3, ElementWise, InnerSpace};
 
 use crate::shader::{Lambertian, Material};
 
 use super::{
+    aabb::AxisAlignedBoundingBox,
     ray::{Point, Ray},
     Collision, RayCollidable,
 };
@@ -46,6 +47,10 @@ impl RayCollidable for Sphere {
             })
         }
     }
+
+    fn get_bounds(&self, _time_start: f64, _time_end: f64) -> Option<AxisAlignedBoundingBox> {
+        return Option::Some(self.into());
+    }
 }
 
 impl Sphere {
@@ -60,5 +65,14 @@ impl Sphere {
             radius,
             material,
         }
+    }
+}
+
+impl From<&Sphere> for AxisAlignedBoundingBox {
+    fn from(value: &Sphere) -> Self {
+        return Self {
+            start_point: value.center.sub_element_wise(value.radius),
+            end_point: value.center.add_element_wise(value.radius),
+        };
     }
 }

@@ -2,7 +2,9 @@ use std::sync::Arc;
 
 use crate::shader::Material;
 
-use super::{moving_sphere::MovingSphere, sphere::Sphere, Point, Ray, Vector};
+use super::{
+    aabb::AxisAlignedBoundingBox, moving_sphere::MovingSphere, sphere::Sphere, Point, Ray, Vector,
+};
 
 /** An object representing a collision between a ray and a `RayCollidable`
 
@@ -30,6 +32,9 @@ pub trait RayCollidable {
     //!
     //! If a collision will not happen, return None
     fn will_intersect(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<Collision>;
+
+    /// Return a bounding box for this object between the specified time intervals.
+    fn get_bounds(&self, time_start: f64, time_end: f64) -> Option<AxisAlignedBoundingBox>;
 }
 
 #[derive(Clone)]
@@ -44,6 +49,13 @@ impl RayCollidable for Geometry {
         match self {
             Self::Sphere(sphere) => sphere.will_intersect(ray, t_min, t_max),
             Self::MovingSphere(sphere) => sphere.will_intersect(ray, t_min, t_max),
+        }
+    }
+
+    fn get_bounds(&self, time_start: f64, time_end: f64) -> Option<AxisAlignedBoundingBox> {
+        match self {
+            Self::MovingSphere(sphere) => sphere.get_bounds(time_start, time_end),
+            Self::Sphere(sphere) => sphere.get_bounds(time_start, time_end),
         }
     }
 }

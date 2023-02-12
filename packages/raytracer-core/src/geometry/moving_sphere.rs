@@ -1,11 +1,12 @@
 /// TODO: I don't like this abstraction, but it's easier for hacking at it
 use std::sync::Arc;
 
-use cgmath::{vec3, InnerSpace};
+use cgmath::{vec3, ElementWise, InnerSpace};
 
 use crate::shader::{Lambertian, Material};
 
 use super::{
+    aabb::AABB,
     ray::{Point, Ray},
     Collision, RayCollidable,
 };
@@ -48,6 +49,20 @@ impl RayCollidable for MovingSphere {
                 material,
             })
         }
+    }
+
+    fn get_bounds(&self, time_start: f64, time_end: f64) -> Option<AABB> {
+        let box_at_t0: AABB;
+        let box_at_t1: AABB;
+
+        let box_start_at_t0 = self.center(time_start).sub_element_wise(self.radius);
+        let box_end_at_t0 = self.center(time_start).add_element_wise(self.radius);
+        box_at_t0 = AABB::new(box_start_at_t0, box_end_at_t0);
+
+        let box_start_at_t1 = self.center(time_end).sub_element_wise(self.radius);
+        let box_end_at_t1 = self.center(time_end).add_element_wise(self.radius);
+        box_at_t1 = AABB::new(box_start_at_t1, box_end_at_t1);
+        return Option::Some(AABB::bounding_box(&box_at_t0, &box_at_t1));
     }
 }
 

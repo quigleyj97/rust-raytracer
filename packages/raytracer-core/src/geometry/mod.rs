@@ -3,6 +3,7 @@
 pub use self::ray::{Point, Ray, Vector};
 pub use self::raycollidable::{Collision, Geometry, RayCollidable};
 
+pub mod aabb;
 pub mod moving_sphere;
 mod ray;
 mod raycollidable;
