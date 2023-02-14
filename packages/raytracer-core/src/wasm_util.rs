@@ -2,8 +2,6 @@
 //!
 //! The helpers in this file are intended to be called in JS, and are made
 //! available as globals on the WASM binary.
-use crate::image::buffer;
-use crate::render;
 use console_error_panic_hook;
 use console_log;
 use log::{info, Level};
@@ -22,7 +20,9 @@ pub fn init_debug_hooks() {
 #[allow(dead_code)]
 #[wasm_bindgen]
 pub fn draw_scene() -> Vec<u8> {
-    let test_image = render::render_helloworld();
-    let result = buffer::convert::rgb_to_rgba(&test_image, 255);
-    result.data
+    // let test_image = render::render_helloworld();
+    // let result = buffer::convert::rgb_to_rgba(&test_image, 255);
+    // result.data
+    // TODO: Move WASM into it's own module
+    vec![]
 }

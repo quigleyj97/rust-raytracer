@@ -1,7 +1,7 @@
-use crate::geometry::{Collision, Ray, Vector};
+use crate::geometry::{ray::Ray, raycollidable::Collision, Vector};
 use cgmath::{vec3, InnerSpace};
 
-use super::MaterialTrait;
+use super::{Color, MaterialTrait};
 
 pub struct Dielectric {
     /// The refractive index for this material as given by Snell's Law
@@ -25,7 +25,7 @@ impl Dielectric {
 }
 
 impl MaterialTrait for Dielectric {
-    fn scatter(&self, ray: &Ray, collision: &Collision) -> Option<(Vector, Ray)> {
+    fn scatter(&self, ray: &Ray, collision: &Collision) -> Option<(Color, Ray)> {
         let is_front_face = cgmath::dot(ray.direction, collision.normal) < 0.0;
         let face_normal = if is_front_face {
             collision.normal
@@ -64,6 +64,8 @@ impl MaterialTrait for Dielectric {
     }
 }
 
+// TODO: Move the below into a helper file
+
 /// Refract a ray according to Snell's Law
 ///
 /// refractive_ratio is the ratio between the refractive indices of the materials forming the optical interface.
@@ -84,11 +86,6 @@ fn refract_hack(
         -((1.0 - refraction_perpendicular.magnitude2()).abs().sqrt()) * normal;
     refraction_parallel + refraction_perpendicular
 }
-
-// fn refract(ray_direction: Vector, normal: Vector, refractive_ratio: f64) -> Vector {
-//     let cos_theta = f64::min(cgmath::dot(-ray_direction.normalize(), normal.normalize()), 1.0);
-//     refract_hack(ray_direction, normal, refractive_ratio, cos_theta)
-// }
 
 fn reflect(vector: Vector, normal: Vector) -> Vector {
     vector - (cgmath::dot(vector, normal) * (2.0 * normal))

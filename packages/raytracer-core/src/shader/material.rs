@@ -1,11 +1,11 @@
 use std::sync::Arc;
 
-use crate::geometry::{Collision, Ray, Vector};
+use crate::geometry::{ray::Ray, raycollidable::Collision};
 
-use super::{Dielectric, Lambertian, Metallic};
+use super::{Color, Dielectric, Lambertian, Metallic};
 
 pub trait MaterialTrait {
-    fn scatter(&self, ray: &Ray, collision: &Collision) -> Option<(Vector, Ray)>;
+    fn scatter(&self, ray: &Ray, collision: &Collision) -> Option<(Color, Ray)>;
 }
 
 #[derive(Clone)]
@@ -17,7 +17,7 @@ pub enum Material {
 
 impl MaterialTrait for Material {
     #[inline(always)]
-    fn scatter(&self, ray: &Ray, collision: &Collision) -> Option<(Vector, Ray)> {
+    fn scatter(&self, ray: &Ray, collision: &Collision) -> Option<(Color, Ray)> {
         match self {
             Material::Dielectric(dielectric) => dielectric.scatter(ray, collision),
             Material::Lambertian(lambertian) => lambertian.scatter(ray, collision),

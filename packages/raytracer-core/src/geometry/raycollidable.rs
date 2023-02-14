@@ -1,10 +1,4 @@
-use std::sync::Arc;
-
-use crate::shader::Material;
-
-use super::{
-    aabb::AxisAlignedBoundingBox, moving_sphere::MovingSphere, sphere::Sphere, Point, Ray, Vector,
-};
+use super::{aabb::AxisAlignedBoundingBox, ray::Ray, Point, Vector};
 
 /** An object representing a collision between a ray and a `RayCollidable`
 
@@ -12,16 +6,17 @@ The `point` is the point at which the collision occurred, `normal` is the
 outward surface normal at the point of collision, and `t` is the distance
 along the ray that the collision occurred.
  */
+#[derive(Debug, PartialEq, Clone)]
 pub struct Collision {
+    /// The point at which the collision occurred
     pub point: Point,
+    /// The normal vector to the point of collision
     pub normal: Vector,
+    /// The distance along the input ray that the collision occurred.
     pub t: f64,
-    pub material: Material,
 }
 
-// note to self: remember we aren't calculating face side here, we need to do
-// that at raster time
-
+/// A trait for objects that are intersectable with Rays
 pub trait RayCollidable {
     //! Tests if the given ray will intersect self between t_min and t_max, where
     //! t is the distance along the ray from it's origin.
@@ -36,39 +31,3 @@ pub trait RayCollidable {
     /// Return a bounding box for this object between the specified time intervals.
     fn get_bounds(&self, time_start: f64, time_end: f64) -> Option<AxisAlignedBoundingBox>;
 }
-
-#[derive(Clone)]
-pub enum Geometry {
-    Sphere(Arc<Sphere>),
-    MovingSphere(Arc<MovingSphere>),
-}
-
-impl RayCollidable for Geometry {
-    #[inline(always)]
-    fn will_intersect(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<Collision> {
-        match self {
-            Self::Sphere(sphere) => sphere.will_intersect(ray, t_min, t_max),
-            Self::MovingSphere(sphere) => sphere.will_intersect(ray, t_min, t_max),
-        }
-    }
-
-    fn get_bounds(&self, time_start: f64, time_end: f64) -> Option<AxisAlignedBoundingBox> {
-        match self {
-            Self::MovingSphere(sphere) => sphere.get_bounds(time_start, time_end),
-            Self::Sphere(sphere) => sphere.get_bounds(time_start, time_end),
-        }
-    }
-}
-
-macro_rules! make_from {
-    ($geoType:ident) => {
-        impl From<Arc<$geoType>> for Geometry {
-            fn from(value: Arc<$geoType>) -> Self {
-                Self::$geoType(value)
-            }
-        }
-    };
-}
-
-make_from!(Sphere);
-make_from!(MovingSphere);

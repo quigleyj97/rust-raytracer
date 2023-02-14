@@ -1,7 +1,6 @@
-use crate::geometry::{
-    util::vector::{near_zero, random_unit_vector},
-    Collision, Ray, Vector,
-};
+use cgmath::{relative_eq, Zero};
+
+use crate::geometry::{ray::Ray, raycollidable::Collision, util::random_unit_vector, Vector};
 
 use super::MaterialTrait;
 
@@ -13,7 +12,7 @@ impl MaterialTrait for Lambertian {
     fn scatter(&self, ray: &Ray, collision: &Collision) -> Option<(Vector, Ray)> {
         let mut scatter_direction = collision.normal + random_unit_vector();
 
-        if near_zero(scatter_direction) {
+        if relative_eq!(scatter_direction, Zero::zero()) {
             scatter_direction = collision.normal;
         }
 

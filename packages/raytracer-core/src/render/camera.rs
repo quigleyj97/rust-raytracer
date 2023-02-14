@@ -2,7 +2,9 @@
 
 use cgmath::{Angle, Deg, InnerSpace};
 
-use crate::geometry::{util, Point, Ray, Vector};
+use crate::geometry::{ray::Ray, util, Point, Vector};
+
+/// A camera that projects sample rays into a scene
 pub struct Camera {
     origin: Point,
     /// The time in scene-seconds to start casting rays from
@@ -31,7 +33,7 @@ pub struct Camera {
 impl Camera {
     /// Project a ray into space from a UV screenspace coordinate
     pub fn project_ray(&self, u: f64, v: f64) -> Ray {
-        let Vector { x, y, z: _ } = self.lens_radius * util::vector::random_vector_in_disk();
+        let Vector { x, y, z: _ } = self.lens_radius * util::random_vector_in_disk();
         let offset = self.screen_u * x + self.screen_v * y;
         let time = fastrand::f64() * (self.time_end - self.time_start) + self.time_start;
         Ray::new(

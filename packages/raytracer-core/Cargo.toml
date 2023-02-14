@@ -18,6 +18,9 @@ rand = "0.8.5"
 getrandom = "0.2.8"
 fastrand = "1.8.0"
 
+[dev-dependencies]
+sha2 = "0.10"
+
 [lib]
 crate-type = ["cdylib", "rlib"]
 

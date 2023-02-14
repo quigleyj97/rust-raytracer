@@ -1,11 +1,12 @@
-use cgmath::{Point3, Vector3};
+use super::{Point, Vector};
 
-pub type Vector = Vector3<f64>;
-pub type Point = Point3<f64>;
-
+/// A ray that can be cast into a scene.
 pub struct Ray {
+    /// The point at which this ray originates
     pub origin: Point,
+    /// The direction in which this ray points
     pub direction: Vector,
+    /// The time that this ray was cast, in scene-time
     pub time: f64,
 }
 

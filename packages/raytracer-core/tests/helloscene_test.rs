@@ -1,13 +1,15 @@
 use cgmath::{point3, vec3, Deg};
 use log::{debug, info};
 
-use crate::{
-    image::buffer::ImageBuffer,
-    render::{camera::Camera, iter::ChunkedPixelIterator, renderer::Renderer},
-    scene::new_test_world,
+use raytracer_core::{
+    image::{buffer::ImageBuffer, iter::ChunkedPixelIterator},
+    render::{camera::Camera, renderer::Renderer},
 };
+use sha2::{Digest, Sha256};
 
-pub fn render_helloworld() -> ImageBuffer {
+#[test]
+pub fn renders_helloworld() {
+    fastrand::seed(42);
     const WIDTH: usize = 720;
     const HEIGHT: usize = 405;
 
@@ -27,7 +29,7 @@ pub fn render_helloworld() -> ImageBuffer {
 
     debug!("Output dimensions: {} x {}", WIDTH, HEIGHT);
 
-    let scene = new_test_world();
+    // let scene = new_test_world();
 
     let mut buf = ImageBuffer::new_rgb(WIDTH, HEIGHT);
 
@@ -41,8 +43,12 @@ pub fn render_helloworld() -> ImageBuffer {
         if i_chunk % 2 == 0 {
             continue;
         }
-        renderer.render_to_buffer(&scene, &mut buf, chunk);
+        // renderer.render_to_buffer(&scene, &mut buf, chunk);
     }
 
-    buf
+    let mut hasher = Sha256::new();
+    hasher.update(buf.data);
+    let result = hasher.finalize();
+
+    panic!("{:x}", result)
 }

@@ -1,16 +1,15 @@
-use cgmath::{vec3, ElementWise, InnerSpace, Vector3};
+use cgmath::{vec3, InnerSpace, Vector3};
 
 use crate::{
-    geometry::{Ray, RayCollidable},
-    image::buffer::ImageBuffer,
-    scene::SceneGraph,
-    shader::MaterialTrait,
+    geometry::{ray::Ray, raycollidable::RayCollidable},
+    image::{
+        buffer::ImageBuffer,
+        iter::{Pixel, PixelIterator},
+    },
+    scene::scenegraph::SceneGraph,
 };
 
-use super::{
-    camera::Camera,
-    iter::{Pixel, PixelIterator},
-};
+use super::camera::Camera;
 
 pub struct Renderer {
     width: usize,
@@ -48,7 +47,7 @@ impl Renderer {
         iterator: PixelIterator,
     ) {
         let rng = fastrand::Rng::new();
-        for Pixel { x, y } in iterator {
+        for Pixel { x, y, idx } in iterator {
             let i = x;
             let j = y;
             let mut color = vec3(0.0, 0.0, 0.0);
@@ -59,7 +58,7 @@ impl Renderer {
                 color += ray_color(&ray, scene, 0.001, self.max_ray_casts);
             }
             color /= self.samples_per_pixel as f64;
-            let idx = (j * self.width + i) * 3;
+            let idx = idx * 3;
             buf.data[idx + 0] = (256.0 * color[0].sqrt()).round() as u8;
             buf.data[idx + 1] = (256.0 * color[1].sqrt()).round() as u8;
             buf.data[idx + 2] = (256.0 * color[2].sqrt()).round() as u8;
@@ -81,17 +80,17 @@ fn ray_color<T: RayCollidable>(
             // do nothing
         }
         Option::Some(collision) => {
-            return match collision.material.scatter(ray, &collision) {
-                Option::None => vec3(0.0, 0.0, 0.0),
-                Option::Some((attenuation, scatter_ray)) => {
-                    return attenuation.mul_element_wise(ray_color(
-                        &scatter_ray,
-                        scene,
-                        min_clip,
-                        max_depth - 1,
-                    ));
-                }
-            };
+            // return match collision.material.scatter(ray, &collision) {
+            //     Option::None => vec3(0.0, 0.0, 0.0),
+            //     Option::Some((attenuation, scatter_ray)) => {
+            //         return attenuation.mul_element_wise(ray_color(
+            //             &scatter_ray,
+            //             scene,
+            //             min_clip,
+            //             max_depth - 1,
+            //         ));
+            //     }
+            // };
         }
     }
 

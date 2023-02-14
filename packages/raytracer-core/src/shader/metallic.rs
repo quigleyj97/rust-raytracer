@@ -1,8 +1,8 @@
 use cgmath::InnerSpace;
 
-use crate::geometry::{util, Collision, Ray, Vector};
+use crate::geometry::{ray::Ray, raycollidable::Collision, util, Vector};
 
-use super::MaterialTrait;
+use super::{Color, MaterialTrait};
 
 pub struct Metallic {
     /// The 'color' of the metal
@@ -22,11 +22,11 @@ impl Metallic {
 }
 
 impl MaterialTrait for Metallic {
-    fn scatter(&self, ray: &Ray, collision: &Collision) -> Option<(Vector, Ray)> {
+    fn scatter(&self, ray: &Ray, collision: &Collision) -> Option<(Color, Ray)> {
         let reflection = Metallic::reflect(ray.direction.normalize(), collision.normal);
         return if cgmath::dot(reflection, collision.normal) > 0.0 {
             let reflection_fuzzed = if self.fuzziness != 0.0 {
-                reflection + (self.fuzziness * util::vector::random_unit_vector())
+                reflection + (self.fuzziness * util::random_unit_vector())
             } else {
                 reflection
             };

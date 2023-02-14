@@ -1,8 +1,12 @@
 use std::mem::swap;
 
-use super::{Point, Ray};
+use super::{
+    ray::Ray,
+    raycollidable::{Collision, RayCollidable},
+    Point,
+};
 
-#[derive(Clone, Debug)]
+#[derive(Clone, PartialEq, Debug)]
 pub struct AxisAlignedBoundingBox {
     /// The corner of this AABB with the smallest coordinates in all dimensions
     pub start_point: Point,
@@ -13,7 +17,7 @@ pub struct AxisAlignedBoundingBox {
 pub type AABB = AxisAlignedBoundingBox;
 
 /// 2-tuple struct representing the interval across which a hit has occurred between a ray and an AABB
-#[derive(Clone, Default, Debug)]
+#[derive(Clone, PartialEq, Default, Debug)]
 pub struct AABBCollision(
     /// The distance along the ray where the collision starts
     pub f64,
@@ -67,6 +71,16 @@ impl AxisAlignedBoundingBox {
             start_point: min,
             end_point: max,
         };
+    }
+}
+
+impl RayCollidable for AxisAlignedBoundingBox {
+    fn will_intersect(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<Collision> {
+        todo!()
+    }
+
+    fn get_bounds(&self, time_start: f64, time_end: f64) -> Option<AxisAlignedBoundingBox> {
+        todo!()
     }
 }
 

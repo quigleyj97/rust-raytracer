@@ -1,22 +1,19 @@
 /// TODO: I don't like this abstraction, but it's easier for hacking at it
-use std::sync::Arc;
-
-use cgmath::{vec3, ElementWise, InnerSpace};
-
-use crate::shader::{Lambertian, Material};
+use cgmath::{ElementWise, InnerSpace};
 
 use super::{
     aabb::AABB,
-    ray::{Point, Ray},
-    Collision, RayCollidable,
+    ray::Ray,
+    raycollidable::{Collision, RayCollidable},
+    Point,
 };
 
 /// Almost identical to Sphere, but it moves from start a distance of (end - start) every 1 screen second
+#[derive(Clone, PartialEq, Debug)]
 pub struct MovingSphere {
     pub center_start: Point,
     pub center_end: Point,
     pub radius: f64,
-    pub material: Material,
 }
 
 impl RayCollidable for MovingSphere {
@@ -41,12 +38,10 @@ impl RayCollidable for MovingSphere {
             }
             let point = ray.point_at(root);
             let normal = (point - self.center(ray.time)) / self.radius;
-            let material = self.material.clone();
             Option::Some(Collision {
                 t: root,
                 point,
                 normal,
-                material,
             })
         }
     }
@@ -73,21 +68,10 @@ impl MovingSphere {
     }
 
     pub fn new(center_start: Point, center_end: Point, radius: f64) -> Self {
-        let material = Lambertian::new(vec3(1.0, 0.0, 0.0));
-        Self::new_with_material(center_start, center_end, radius, Arc::new(material).into())
-    }
-
-    pub fn new_with_material(
-        center_start: Point,
-        center_end: Point,
-        radius: f64,
-        material: Material,
-    ) -> Self {
         Self {
             center_start,
             center_end,
             radius,
-            material,
         }
     }
 }
