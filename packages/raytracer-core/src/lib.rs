@@ -1,5 +1,6 @@
 pub mod geometry;
 pub mod image;
+mod macros;
 pub mod render;
 pub mod scene;
 pub mod shader;

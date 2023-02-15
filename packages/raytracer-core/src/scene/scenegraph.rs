@@ -1,13 +1,15 @@
-use crate::geometry::{
-    aabb::AABB,
-    ray::Ray,
-    raycollidable::{Collision, RayCollidable},
-    Geometry,
+use crate::{
+    geometry::{
+        aabb::AABB,
+        ray::Ray,
+        raycollidable::{Collision, RayCollidable},
+    },
+    render::renderable::RenderableGeometry,
 };
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq, Debug)]
 pub struct SceneGraph {
-    objects: Vec<Geometry>,
+    pub objects: Vec<RenderableGeometry>,
 }
 
 impl RayCollidable for SceneGraph {

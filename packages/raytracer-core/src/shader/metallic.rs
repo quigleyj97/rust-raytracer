@@ -2,8 +2,9 @@ use cgmath::InnerSpace;
 
 use crate::geometry::{ray::Ray, raycollidable::Collision, util, Vector};
 
-use super::{Color, MaterialTrait};
+use super::material::{MaterialTrait, ScatterResult};
 
+#[derive(PartialEq, Debug, Clone)]
 pub struct Metallic {
     /// The 'color' of the metal
     albedo: Vector,
@@ -22,7 +23,7 @@ impl Metallic {
 }
 
 impl MaterialTrait for Metallic {
-    fn scatter(&self, ray: &Ray, collision: &Collision) -> Option<(Color, Ray)> {
+    fn scatter(&self, ray: &Ray, collision: &Collision) -> ScatterResult {
         let reflection = Metallic::reflect(ray.direction.normalize(), collision.normal);
         return if cgmath::dot(reflection, collision.normal) > 0.0 {
             let reflection_fuzzed = if self.fuzziness != 0.0 {
@@ -31,9 +32,9 @@ impl MaterialTrait for Metallic {
                 reflection
             };
             let scatter_ray = Ray::new(collision.point, reflection_fuzzed, ray.time);
-            Option::Some((self.albedo, scatter_ray))
+            ScatterResult::Bounce(self.albedo, scatter_ray)
         } else {
-            Option::None
+            ScatterResult::Absorb(self.albedo)
         };
     }
 }

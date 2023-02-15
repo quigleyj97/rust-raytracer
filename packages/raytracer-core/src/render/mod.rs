@@ -1,3 +1,3 @@
 pub mod camera;
-mod renderable;
+pub mod renderable;
 pub mod renderer;

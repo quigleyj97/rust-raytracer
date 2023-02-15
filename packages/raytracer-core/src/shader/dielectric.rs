@@ -1,8 +1,9 @@
 use crate::geometry::{ray::Ray, raycollidable::Collision, Vector};
 use cgmath::{vec3, InnerSpace};
 
-use super::{Color, MaterialTrait};
+use super::material::{MaterialTrait, ScatterResult};
 
+#[derive(PartialEq, Debug, Clone)]
 pub struct Dielectric {
     /// The refractive index for this material as given by Snell's Law
     refraction_index: f64,
@@ -25,7 +26,7 @@ impl Dielectric {
 }
 
 impl MaterialTrait for Dielectric {
-    fn scatter(&self, ray: &Ray, collision: &Collision) -> Option<(Color, Ray)> {
+    fn scatter(&self, ray: &Ray, collision: &Collision) -> ScatterResult {
         let is_front_face = cgmath::dot(ray.direction, collision.normal) < 0.0;
         let face_normal = if is_front_face {
             collision.normal
@@ -57,10 +58,10 @@ impl MaterialTrait for Dielectric {
         } else {
             reflect(ray.direction, face_normal)
         };
-        return Option::Some((
+        return ScatterResult::Bounce(
             vec3(1.0, 1.0, 1.0),
             Ray::new(collision.point, refracted_ray_direction, ray.time),
-        ));
+        );
     }
 }
 
