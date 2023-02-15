@@ -1,15 +1,16 @@
-use cgmath::{vec3, InnerSpace, Vector3};
+use cgmath::{vec3, ElementWise};
 
 use crate::{
-    geometry::{ray::Ray, raycollidable::RayCollidable},
+    geometry::ray::Ray,
     image::{
         buffer::ImageBuffer,
         iter::{Pixel, PixelIterator},
     },
     scene::scenegraph::SceneGraph,
+    shader::Color,
 };
 
-use super::camera::Camera;
+use super::{camera::Camera, renderable::RayColorResult};
 
 pub struct Renderer {
     width: usize,
@@ -55,7 +56,7 @@ impl Renderer {
                 let u: f64 = ((i as f64) + rng.f64()) / (self.width - 1) as f64;
                 let v: f64 = ((j as f64) + rng.f64()) / (self.height - 1) as f64;
                 let ray = self.camera.project_ray(u, v);
-                color += ray_color(&ray, scene, 0.001, self.max_ray_casts);
+                color += Self::ray_color(&ray, scene, 0.001, self.max_ray_casts);
             }
             color /= self.samples_per_pixel as f64;
             let idx = idx * 3;
@@ -64,37 +65,16 @@ impl Renderer {
             buf.data[idx + 2] = (256.0 * color[2].sqrt()).round() as u8;
         }
     }
-}
 
-fn ray_color<T: RayCollidable>(
-    ray: &Ray,
-    scene: &T,
-    min_clip: f64,
-    max_depth: i64,
-) -> Vector3<f64> {
-    if max_depth < 0 {
-        return vec3(0.0, 0.0, 0.0);
-    }
-    match scene.will_intersect(&ray, min_clip, f64::INFINITY) {
-        Option::None => {
-            // do nothing
+    fn ray_color(ray: &Ray, scene: &SceneGraph, min_clip: f64, max_depth: i64) -> Color {
+        if max_depth < 0 {
+            return vec3(0.0, 0.0, 0.0);
         }
-        Option::Some(collision) => {
-            // return match collision.material.scatter(ray, &collision) {
-            //     Option::None => vec3(0.0, 0.0, 0.0),
-            //     Option::Some((attenuation, scatter_ray)) => {
-            //         return attenuation.mul_element_wise(ray_color(
-            //             &scatter_ray,
-            //             scene,
-            //             min_clip,
-            //             max_depth - 1,
-            //         ));
-            //     }
-            // };
+        match scene.cast_ray(&ray, min_clip, f64::INFINITY) {
+            RayColorResult::Absorb(color) => color,
+            RayColorResult::Bounce(color, bounce_ray) => {
+                color.mul_element_wise(Self::ray_color(&bounce_ray, scene, min_clip, max_depth - 1))
+            }
         }
     }
-
-    let unit_direction = ray.direction.normalize();
-    let t = 0.5 * (unit_direction.y + 1.0);
-    return (1.0 - t) * vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
 }

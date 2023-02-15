@@ -16,8 +16,6 @@ pub struct RenderableGeometry {
 }
 
 pub enum RayColorResult {
-    /// No collision with this object occurred
-    NoHit,
     Bounce(
         /// The apparent color of this object to apply to the bounce ray
         Color,
@@ -30,20 +28,15 @@ pub enum RayColorResult {
     ),
 }
 pub trait Renderable {
-    fn ray_color(&self, ray: &Ray, min_clip: f64, max_clip: f64) -> RayColorResult;
+    fn ray_color(&self, ray: &Ray, collision: &Collision) -> RayColorResult;
 }
 
 impl Renderable for RenderableGeometry {
-    fn ray_color(&self, ray: &Ray, min_clip: f64, max_clip: f64) -> RayColorResult {
-        return match self.will_intersect(ray, min_clip, max_clip) {
-            None => RayColorResult::NoHit,
-            Some(collision) => match self.material.scatter(ray, &collision) {
-                ScatterResult::Bounce(color, scatter_ray) => {
-                    RayColorResult::Bounce(color, scatter_ray)
-                }
-                ScatterResult::Absorb(color) => RayColorResult::Absorb(color),
-            },
-        };
+    fn ray_color(&self, ray: &Ray, collision: &Collision) -> RayColorResult {
+        match self.material.scatter(ray, collision) {
+            ScatterResult::Bounce(color, scatter_ray) => RayColorResult::Bounce(color, scatter_ray),
+            ScatterResult::Absorb(color) => RayColorResult::Absorb(color),
+        }
     }
 }
 

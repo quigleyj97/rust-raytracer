@@ -14,10 +14,11 @@ use raytracer_core::{
     image::{
         blend::{self, BlendingMode},
         buffer::ImageBuffer,
+        iter::ChunkedPixelIterator,
         ppm,
     },
-    render::{camera::Camera, iter::ChunkedPixelIterator, renderer::Renderer},
-    scene,
+    render::{camera::Camera, renderer::Renderer},
+    scene::util::new_random_world,
 };
 
 #[derive(Parser)]
@@ -61,7 +62,7 @@ fn main() -> io::Result<()> {
 
     let mut threadpool = Vec::<JoinHandle<ImageBuffer>>::new();
 
-    let scene = Arc::new(scene::new_random_world());
+    let scene = Arc::new(new_random_world());
 
     for chunk in ChunkedPixelIterator::with_chunks(width, height, threads) {
         info!("Spawning thread...");

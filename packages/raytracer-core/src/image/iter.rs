@@ -17,11 +17,11 @@ pub struct PixelIterator {
 impl PixelIterator {
     /// Given a buffer, return a PixelIterator to iterate through that buffer
     pub fn new_from_buffer(buffer: &ImageBuffer) -> Self {
-        Self::new_from_dimensions(buffer.width, buffer.height)
+        Self::with_dimensions(buffer.width, buffer.height)
     }
 
     /// Given a width and height, return a pixel iterator over those dimensions
-    pub fn new_from_dimensions(width: usize, height: usize) -> Self {
+    pub fn with_dimensions(width: usize, height: usize) -> Self {
         Self {
             width,
             height,
@@ -66,7 +66,7 @@ mod tests {
 
     #[test]
     fn new_given_valid_dimensions_returns_iterator() {
-        let iterator = PixelIterator::new_from_dimensions(5, 5);
+        let iterator = PixelIterator::with_dimensions(5, 5);
         let pixels: Vec<Pixel> = iterator.take(25).collect();
         assert_eq!(pixels[4], Pixel { x: 4, y: 0, idx: 4 });
         assert_eq!(

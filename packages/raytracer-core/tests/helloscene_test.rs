@@ -1,15 +1,15 @@
 use cgmath::{point3, vec3, Deg};
-use log::{debug, info};
+use log::debug;
 
 use raytracer_core::{
-    image::{buffer::ImageBuffer, iter::ChunkedPixelIterator},
+    image::{buffer::ImageBuffer, iter::PixelIterator},
     render::{camera::Camera, renderer::Renderer},
     scene::util::new_random_world,
 };
 use sha2::{Digest, Sha256};
 
 const TEST_IMAGE_SNAPSHOT: &str =
-    "c579e681a0b0d56fe62c7c3664831059a37087f428c59ad5410b38e0b6527dea";
+    "7bd64840fcf3f790fc83228ece97429cf141b80bf7e5bf079b5f58802782104e";
 
 #[test]
 pub fn renders_helloworld() {
@@ -39,16 +39,12 @@ pub fn renders_helloworld() {
 
     let width = buf.width;
     let height = buf.height;
-    let mut i_chunk = 0;
 
-    for chunk in ChunkedPixelIterator::with_chunks(width, height, 10) {
-        info!("Rendering chunk {} of {}", i_chunk, 10);
-        i_chunk += 1;
-        if i_chunk % 2 == 0 {
-            continue;
-        }
-        renderer.render_to_buffer(&scene, &mut buf, chunk);
-    }
+    renderer.render_to_buffer(
+        &scene,
+        &mut buf,
+        PixelIterator::with_dimensions(width, height),
+    );
 
     let mut hasher = Sha256::new();
     hasher.update(buf.data);

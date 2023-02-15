@@ -1,10 +1,6 @@
 use std::mem::swap;
 
-use super::{
-    ray::Ray,
-    raycollidable::{Collision, RayCollidable},
-    Point,
-};
+use super::{ray::Ray, Point};
 
 #[derive(Clone, PartialEq, Debug)]
 pub struct AxisAlignedBoundingBox {
@@ -71,16 +67,6 @@ impl AxisAlignedBoundingBox {
             start_point: min,
             end_point: max,
         };
-    }
-}
-
-impl RayCollidable for AxisAlignedBoundingBox {
-    fn will_intersect(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<Collision> {
-        todo!()
-    }
-
-    fn get_bounds(&self, time_start: f64, time_end: f64) -> Option<AxisAlignedBoundingBox> {
-        todo!()
     }
 }
 
