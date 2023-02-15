@@ -14,7 +14,7 @@ use raytracer_core::{
     image::{
         blend::{self, BlendingMode},
         buffer::ImageBuffer,
-        iter::ChunkedPixelIterator,
+        iter::ChunkedPixelIndexer,
         ppm,
     },
     render::{camera::Camera, renderer::Renderer},
@@ -64,7 +64,7 @@ fn main() -> io::Result<()> {
 
     let scene = Arc::new(new_random_world());
 
-    for chunk in ChunkedPixelIterator::with_chunks(width, height, threads) {
+    for chunk in ChunkedPixelIndexer::with_chunks(width, height, threads) {
         info!("Spawning thread...");
         // make a copy of the world specific to each thread
         // this helps the borrow checker see the move into the thread, without

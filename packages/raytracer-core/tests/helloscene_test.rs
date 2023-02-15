@@ -2,7 +2,7 @@ use cgmath::{point3, vec3, Deg};
 use log::debug;
 
 use raytracer_core::{
-    image::{buffer::ImageBuffer, iter::PixelIterator},
+    image::{buffer::ImageBuffer, iter::PixelIndexer},
     render::{camera::Camera, renderer::Renderer},
     scene::util::new_random_world,
 };
@@ -43,7 +43,7 @@ pub fn renders_helloworld() {
     renderer.render_to_buffer(
         &scene,
         &mut buf,
-        PixelIterator::with_dimensions(width, height),
+        PixelIndexer::with_dimensions(width, height),
     );
 
     let mut hasher = Sha256::new();

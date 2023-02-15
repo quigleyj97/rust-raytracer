@@ -4,7 +4,7 @@ use crate::{
     geometry::ray::Ray,
     image::{
         buffer::ImageBuffer,
-        iter::{Pixel, PixelIterator},
+        iter::{Pixel, PixelIndexer},
     },
     scene::scenegraph::SceneGraph,
     shader::Color,
@@ -45,7 +45,7 @@ impl Renderer {
         &self,
         scene: &SceneGraph,
         buf: &mut ImageBuffer,
-        iterator: PixelIterator,
+        iterator: PixelIndexer,
     ) {
         let rng = fastrand::Rng::new();
         for Pixel { x, y, idx } in iterator {
